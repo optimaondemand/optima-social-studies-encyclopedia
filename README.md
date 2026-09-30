@@ -19,7 +19,11 @@ Lessons are organized purely by topic. A lesson's course and position in that co
 | `_build/` | `serve.py` (local server), `harvest.py`, `build_index.py`, `inventory.py`, `toc.py` |
 | `NEXT-SESSION.md` | Working notes: decisions, current state, what is and is not built |
 
-## Run it
+## Use it
+
+Hosted editor (public, read-only unless you sign in with a token that can write to this repo): https://optimaondemand.github.io/optima-social-studies-encyclopedia/editor/
+
+## Run it locally
 
 You need Python 3 (with `bs4`, `lxml`, `PyYAML`) and a local clone of `optima-history` **next to** this folder:
 

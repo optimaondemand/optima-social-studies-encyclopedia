@@ -1,11 +1,37 @@
 # Next Session — Social Studies Encyclopedia Experiment
 
-Status as of this handoff (updated 2026-09-30): **editor built and working locally, and now published as its own GitHub
-repo** (`optimaondemand/optima-social-studies-encyclopedia`, created at the user's direction as "the final stage of the
+Status as of this handoff (updated 2026-09-30): **editor built, published as its own GitHub repo, and hosted on GitHub Pages (public)** (`optimaondemand/optima-social-studies-encyclopedia`, created at the user's direction as "the final stage of the
 experiment"). The repo starts from a single fresh commit of the current state; the older local history (which predates the
 clean break and names the old course repos) was deliberately NOT published and stays only in the local `master` branch. The
 encyclopedia draws **only** on the `optima-history` lesson library (a clean break; see below). A demo for the author of the ELA
 editor is pending.
+
+## Progress log: 2026-09-30 (end of day) — read this first
+
+**Published and public.** The repo `optimaondemand/optima-social-studies-encyclopedia` was made **public** (the user: everything
+is already public, so no loss) and the editor is hosted on GitHub Pages:
+**https://optimaondemand.github.io/optima-social-studies-encyclopedia/editor/** (Pages serves `main`, root; `.nojekyll` added).
+The user tried it and confirmed it works.
+
+What was done today, in order:
+- Copied, sorted and renamed Texas History and World History lessons into `optima-history` topical folders (72 lessons, 12 widgets),
+  cleaned course text (banners, week references), enabled Pages there; all pushed. Source course repos untouched (0 changes).
+- Clean break: the encyclopedia reads only `optima-history`; entry ids are `<topic-folder>-<lesson-slug>`; course is metadata only
+  (`course`, `module`, `_meta/lesson_map.json`). No file mentions the old course repos (scanned).
+- Editor: Lessons view with collapsible chronological table of contents (`_meta/topic_order.yml`), Refresh (Pull, fast-forward
+  only), Ulysses-style writing surface, Apply / Undo / Push cart screen (preview only).
+- Published the repo from one clean commit; older local history stays on the local `master` branch only.
+- **Read-only view for the hosted page:** on the sign-in screen, "Just look around (read-only)" lets anyone browse without a
+  token (reads the site's own files; lesson previews load from `optimaondemand.github.io/optima-history/`). Saving still needs a
+  GitHub token with write access to this repo. Implemented as `S.viewOnly` in `editor/index.html` (`readText`, `writeText`,
+  `selectLesson`, `boot`, `#siView`).
+
+Where the user works from now on: this folder (`optima-social-studies-encyclopedia`). Commit/push only when asked; never force-push.
+
+Still true and unbuilt: Place order steps 1 and 2 change nothing; Refresh, Re-scan and Place order work only with the local server
+(`python _build/serve.py`); the hosted page has had one manual look-around only, no automated test; topic tags on entries were seeded
+from old text and not re-verified; the hard part of writing edits back into lesson HTML without losing glossary tooltips/widgets
+is not started. The earlier "Open items" list below still stands.
 
 ## What this is
 
