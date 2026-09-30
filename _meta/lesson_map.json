@@ -1,0 +1,293 @@
+{
+ "note": "Course-fit metadata per lesson in optima-history (course slug and position in that course). Used by harvest.py; the lesson files themselves carry no course or sequence in their names.",
+ "lessons": {
+  "age-of-exploration/coronado-and-the-llano-estacado.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-04/lesson-1.html"
+  },
+  "age-of-exploration/eight-years-walking.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-03/lesson-2.html"
+  },
+  "age-of-exploration/moscoso-the-caddo-and-four-different-texases.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-04/lesson-2.html"
+  },
+  "age-of-exploration/shipwreck-on-the-island-of-misfortune.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-03/lesson-1.html"
+  },
+  "age-of-exploration/the-fall-of-tenochtitlan.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-02/lesson-1.html"
+  },
+  "age-of-exploration/the-question-every-empire-faced.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-01/lesson-1.html"
+  },
+  "age-of-exploration/three-models-side-by-side.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-01/lesson-2.html"
+  },
+  "age-of-exploration/why-it-worked-and-what-1519-found-in-texas.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-02/lesson-2.html"
+  },
+  "ancient-anatolia/the-hittites-anatolian-cities-ironworking-and-ch.html": {
+   "course": "wh6",
+   "position": "week-08/lesson-1.html"
+  },
+  "ancient-egypt/egypt-divided-and-a-king-from-the-south.html": {
+   "course": "wh6",
+   "position": "week-10/lesson-1.html"
+  },
+  "ancient-egypt/hatshepsut-and-the-voyage-to-punt.html": {
+   "course": "wh6",
+   "position": "week-06/lesson-1.html"
+  },
+  "ancient-egypt/herodotus-and-a-dynasty-that-looked-backward.html": {
+   "course": "wh6",
+   "position": "week-10/lesson-2.html"
+  },
+  "ancient-egypt/the-gift-of-the-nile-narmer-unites-egypt.html": {
+   "course": "wh6",
+   "position": "week-05/lesson-1.html"
+  },
+  "ancient-egypt/the-old-kingdom-pyramids-labor-and-wisdom.html": {
+   "course": "wh6",
+   "position": "week-05/lesson-2.html"
+  },
+  "ancient-egypt/the-sea-peoples-and-a-world-in-crisis.html": {
+   "course": "wh6",
+   "position": "week-09/lesson-1.html"
+  },
+  "ancient-egypt/thutmose-iii-and-the-battle-of-megiddo.html": {
+   "course": "wh6",
+   "position": "week-06/lesson-2.html"
+  },
+  "ancient-harappan-indus-valley/cities-without-kings-the-mystery-of-the-indus-va.html": {
+   "course": "wh6",
+   "position": "week-07/lesson-1.html"
+  },
+  "ancient-levant/digging-up-the-neolithic-jericho-and-catalhoyuk.html": {
+   "course": "wh6",
+   "position": "week-01/lesson-2.html"
+  },
+  "ancient-levant/jerusalem-falls-and-a-different-kind-of-belief.html": {
+   "course": "wh6",
+   "position": "week-13/lesson-2.html"
+  },
+  "ancient-levant/phoenicia-trade-without-an-empire.html": {
+   "course": "wh6",
+   "position": "week-15/lesson-1.html"
+  },
+  "ancient-levant/two-foundling-cities.html": {
+   "course": "wh6",
+   "position": "week-15/lesson-2.html"
+  },
+  "ancient-mesopotamia/a-basket-on-the-river-the-rise-of-sargon.html": {
+   "course": "wh6",
+   "position": "week-03/lesson-1.html"
+  },
+  "ancient-mesopotamia/amorite-migration-and-the-rise-of-babylon.html": {
+   "course": "wh6",
+   "position": "week-04/lesson-1.html"
+  },
+  "ancient-mesopotamia/ashurbanipal-the-warrior-who-could-read.html": {
+   "course": "wh6",
+   "position": "week-12/lesson-1.html"
+  },
+  "ancient-mesopotamia/ashurnasirpal-ii-and-terror-as-state-policy.html": {
+   "course": "wh6",
+   "position": "week-11/lesson-1.html"
+  },
+  "ancient-mesopotamia/cuneiform-and-the-sumerian-king-list.html": {
+   "course": "wh6",
+   "position": "week-02/lesson-2.html"
+  },
+  "ancient-mesopotamia/hammurabi-s-code-law-class-and-kingship.html": {
+   "course": "wh6",
+   "position": "week-04/lesson-2.html"
+  },
+  "ancient-mesopotamia/holding-an-empire-together-and-losing-it.html": {
+   "course": "wh6",
+   "position": "week-03/lesson-2.html"
+  },
+  "ancient-mesopotamia/nebuchadnezzar-s-babylon-a-city-built-to-dazzle.html": {
+   "course": "wh6",
+   "position": "week-13/lesson-1.html"
+  },
+  "ancient-mesopotamia/the-black-obelisk-and-israel-s-first-contact-wit.html": {
+   "course": "wh6",
+   "position": "week-11/lesson-2.html"
+  },
+  "ancient-mesopotamia/the-fall-of-nineveh-and-war-as-the-ultimate-test.html": {
+   "course": "wh6",
+   "position": "week-12/lesson-2.html"
+  },
+  "ancient-mesopotamia/why-cities-uruk-and-the-birth-of-urban-life.html": {
+   "course": "wh6",
+   "position": "week-02/lesson-1.html"
+  },
+  "ancient-mesopotamia/why-farm-the-origins-of-agriculture.html": {
+   "course": "wh6",
+   "position": "week-01/lesson-1.html"
+  },
+  "archaic-classical-greece/homer-and-the-memory-of-a-lost-world.html": {
+   "course": "wh6",
+   "position": "week-16/lesson-2.html"
+  },
+  "bronze-dark-age-greece/minoan-and-mycenaean-civilization-palace-economi.html": {
+   "course": "wh6",
+   "position": "week-08/lesson-2.html"
+  },
+  "bronze-dark-age-greece/pylos-s-final-days-and-what-survives-the-collaps.html": {
+   "course": "wh6",
+   "position": "week-09/lesson-2.html"
+  },
+  "bronze-dark-age-greece/the-dark-age-after-the-palaces.html": {
+   "course": "wh6",
+   "position": "week-16/lesson-1.html"
+  },
+  "persian-near-east/babylon-falls-and-a-cylinder-s-real-message.html": {
+   "course": "wh6",
+   "position": "week-17/lesson-2.html"
+  },
+  "persian-near-east/cambyses-at-pelusium-and-a-source-worth-doubting.html": {
+   "course": "wh6",
+   "position": "week-18/lesson-1.html"
+  },
+  "persian-near-east/cyaxares-an-eclipse-and-a-kingdom-not-yet-finish.html": {
+   "course": "wh6",
+   "position": "week-14/lesson-2.html"
+  },
+  "persian-near-east/cyrus-s-rise-and-a-basket-story-told-again.html": {
+   "course": "wh6",
+   "position": "week-17/lesson-1.html"
+  },
+  "persian-near-east/darius-s-rock-and-persia-looks-west.html": {
+   "course": "wh6",
+   "position": "week-18/lesson-2.html"
+  },
+  "persian-near-east/six-centuries-in-the-shadows.html": {
+   "course": "wh6",
+   "position": "week-14/lesson-1.html"
+  },
+  "predynastic-shang-china/shang-china-oracle-bones-and-ancestor-kings.html": {
+   "course": "wh6",
+   "position": "week-07/lesson-2.html"
+  },
+  "spanish-republic-texas/a-constitution-falls.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-10/lesson-2.html"
+  },
+  "spanish-republic-texas/a-decade-of-patience-ends-in-a-prison-cell.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-13/lesson-1.html"
+  },
+  "spanish-republic-texas/a-republic-running-out.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-18/lesson-1.html"
+  },
+  "spanish-republic-texas/building-a-government.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-16/lesson-1.html"
+  },
+  "spanish-republic-texas/coleto-creek-and-the-rifle.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-15/lesson-1.html"
+  },
+  "spanish-republic-texas/counting-the-colony.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-06/lesson-2.html"
+  },
+  "spanish-republic-texas/gonzales-to-bexar.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-14/lesson-1.html"
+  },
+  "spanish-republic-texas/governing-themselves.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-11/lesson-2.html"
+  },
+  "spanish-republic-texas/la-salle-s-mistake.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-05/lesson-1.html"
+  },
+  "spanish-republic-texas/lamar-s-war.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-17/lesson-1.html"
+  },
+  "spanish-republic-texas/mexico-s-northern-problem.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-09/lesson-1.html"
+  },
+  "spanish-republic-texas/mission-presidio-pueblo.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-06/lesson-1.html"
+  },
+  "spanish-republic-texas/money-land-and-a-capital.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-16/lesson-2.html"
+  },
+  "spanish-republic-texas/moses-and-stephen-austin.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-09/lesson-2.html"
+  },
+  "spanish-republic-texas/napoleon-s-shock-and-mexico-s-war.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-08/lesson-2.html"
+  },
+  "spanish-republic-texas/nine-years-of-independence-end-in-a-joint-resolu.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-18/lesson-2.html"
+  },
+  "spanish-republic-texas/san-jacinto.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-15/lesson-2.html"
+  },
+  "spanish-republic-texas/san-saba-and-the-limit-of-empire.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-07/lesson-2.html"
+  },
+  "spanish-republic-texas/spain-reacts.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-05/lesson-2.html"
+  },
+  "spanish-republic-texas/the-alamo.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-14/lesson-2.html"
+  },
+  "spanish-republic-texas/the-bourbon-reforms.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-08/lesson-1.html"
+  },
+  "spanish-republic-texas/the-comanche-come-south.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-07/lesson-1.html"
+  },
+  "spanish-republic-texas/the-federation-comes-apart.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-13/lesson-2.html"
+  },
+  "spanish-republic-texas/the-long-ride-south.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-10/lesson-1.html"
+  },
+  "spanish-republic-texas/the-old-three-hundred.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-11/lesson-1.html"
+  },
+  "spanish-republic-texas/the-screws-tighten.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-12/lesson-2.html"
+  },
+  "spanish-republic-texas/walker-s-creek-and-the-revolver.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-17/lesson-2.html"
+  },
+  "spanish-republic-texas/what-1824-promised.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-12/lesson-1.html"
+  }
+ }
+}

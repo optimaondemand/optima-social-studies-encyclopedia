@@ -1,0 +1,51 @@
+# Primary sources / canonical works referenced in the World History and Texas History courses.
+# slug -> title, author, period, aliases (the forms lessons actually use when naming the source).
+# Only includes texts confirmed present in harvested entry content -- six course-map/plan.md sources
+# (Diaz del Castillo, Joutel, Morfi, Molina, Austin's 1821 letter, Maverick) were NOT found anywhere
+# in the harvested narrative prose and are deliberately excluded rather than fabricated in. They may
+# be referenced only in primary-source-exercise pages, which this build never harvested by design.
+schema: 1
+texts:
+  kenyon-jericho-report: {title: "Excavation Report on Neolithic Jericho", author: kathleen-kenyon, period: twentieth-century, aliases: ["Kenyon"]}
+  mellaart-catalhoyuk-report: {title: "Excavation Report on Çatalhöyük", author: james-mellaart, period: twentieth-century, aliases: ["Mellaart"]}
+  epic-of-gilgamesh: {title: "Epic of Gilgamesh (Flood Tablet)", author: anonymous, period: ancient, aliases: ["Epic of Gilgamesh", "Gilgamesh"]}
+  sumerian-king-list: {title: "Sumerian King List", author: anonymous, period: ancient, aliases: ["Sumerian King List"]}
+  legend-of-sargon: {title: "Legend of Sargon (Birth Legend)", author: anonymous, period: ancient, aliases: ["Sargon Birth Legend", "Birth Legend"]}
+  curse-of-akkad: {title: "Curse of Akkad", author: anonymous, period: ancient, aliases: ["Curse of Akkad"]}
+  code-of-hammurabi: {title: "Code of Hammurabi (selected laws)", author: hammurabi, period: ancient, aliases: ["Code of Hammurabi", "Hammurabi's Code"]}
+  prologue-code-of-hammurabi: {title: "Prologue to the Code of Hammurabi", author: hammurabi, period: ancient, aliases: ["prologue to the Code"]}
+  narmer-palette: {title: "Narmer Palette (inscriptions)", author: anonymous, period: ancient, aliases: ["Narmer Palette"]}
+  instructions-of-ptahhotep: {title: "Instructions of Ptahhotep", author: ptahhotep, period: ancient, aliases: ["Instructions of Ptahhotep"]}
+  hatshepsut-punt-inscription: {title: "Hatshepsut's Punt Inscription", author: hatshepsut, period: ancient, aliases: ["Punt Inscription", "Punt"]}
+  annals-of-thutmose-iii: {title: "Annals of Thutmose III (Battle of Megiddo)", author: thutmose-iii, period: ancient, aliases: ["Annals of Thutmose"]}
+  marshall-mohenjo-daro-report: {title: "Mohenjo-daro Excavation Report (1924)", author: john-marshall, period: twentieth-century, aliases: ["Marshall"]}
+  shang-oracle-bones: {title: "Shang Oracle Bone Inscriptions", author: anonymous, period: ancient, aliases: ["oracle bone", "Oracle Bone"]}
+  homers-iliad: {title: "Iliad (Catalogue of Ships / Quarrel of Achilles and Agamemnon)", author: homer, period: ancient, aliases: ["Iliad"]}
+  egyptian-hittite-peace-treaty: {title: "Egyptian-Hittite Peace Treaty", author: anonymous, period: ancient, aliases: ["Egyptian-Hittite Peace Treaty", "peace treaty"]}
+  ramesses-iii-medinet-habu: {title: "Ramesses III's Medinet Habu Inscription", author: ramesses-iii, period: ancient, aliases: ["Medinet Habu"]}
+  pylos-rower-tablets: {title: "Pylos \"Rower Tablets\" (Linear B)", author: anonymous, period: ancient, aliases: ["Rower Tablets", "Linear B tablet"]}
+  great-triumphal-stele-of-piye: {title: "The Great Triumphal Stele of Piye", author: piye, period: ancient, aliases: ["Triumphal Stele of Piye", "Great Triumphal Stele"]}
+  herodotus-histories: {title: "Histories", author: herodotus, period: ancient, aliases: ["Herodotus", "Histories"]}
+  ashurnasirpal-ii-annals: {title: "Ashurnasirpal II's Annals", author: ashurnasirpal-ii, period: ancient, aliases: ["Ashurnasirpal II's Annals", "Ashurnasirpal"]}
+  black-obelisk-shalmaneser: {title: "The Black Obelisk of Shalmaneser III", author: shalmaneser-iii, period: ancient, aliases: ["Black Obelisk"]}
+  ashurbanipal-library-tablets: {title: "Ashurbanipal's Library Tablets", author: anonymous, period: ancient, aliases: ["library tablet", "Library Tablets"]}
+  babylonian-chronicle: {title: "The Babylonian Chronicle", author: anonymous, period: ancient, aliases: ["Babylonian Chronicle"]}
+  nebuchadnezzar-building-inscriptions: {title: "Nebuchadnezzar II's Building Inscriptions (Ishtar Gate)", author: nebuchadnezzar-ii, period: ancient, aliases: ["Building Inscription", "Ishtar Gate"]}
+  herodotus-battle-of-eclipse: {title: "Herodotus's Account of the Battle of the Eclipse", author: herodotus, period: ancient, aliases: ["Battle of the Eclipse"]}
+  founding-of-carthage: {title: "The Legendary Founding of Carthage", author: virgil-and-justin, period: ancient, aliases: ["Dido"]}
+  founding-of-rome: {title: "The Legendary Founding of Rome", author: livy, period: ancient, aliases: ["Romulus", "Remus"]}
+  homers-odyssey: {title: "Odyssey (Odysseus and the Cyclops)", author: homer, period: ancient, aliases: ["Odyssey"]}
+  cyrus-cylinder: {title: "The Cyrus Cylinder", author: anonymous, period: ancient, aliases: ["Cyrus Cylinder"]}
+  behistun-inscription: {title: "The Behistun Inscription", author: darius-i, period: ancient, aliases: ["Behistun Inscription", "Behistun"]}
+  columbus-1493-letter: {title: "1493 Letter Announcing His Voyage (to Luis de Santángel)", author: christopher-columbus, period: early-modern, aliases: ["Columbus"]}
+  cabeza-de-vaca-account: {title: "Account (La Relación)", author: cabeza-de-vaca, period: early-modern, aliases: ["Cabeza de Vaca"]}
+  coronado-1541-letter: {title: "1541 Letter to the Crown Describing Quivira", author: coronado, period: early-modern, aliases: ["Coronado"]}
+  hidalgo-1810-decree: {title: "December 6, 1810 Decree Abolishing Slavery", author: miguel-hidalgo, period: eighteenth-century, aliases: ["Hidalgo", "Grito"]}
+  imperial-colonization-law-1823: {title: "The Imperial Colonization Law, January 1823", author: anonymous, period: nineteenth-century, aliases: ["Imperial Colonization Law"]}
+  austin-1824-regulations: {title: "1824 Civil and Criminal Regulations for the Colony", author: stephen-f-austin, period: nineteenth-century, aliases: ["civil and criminal regulations"]}
+  law-of-april-6-1830: {title: "The Law of April 6, 1830", author: anonymous, period: nineteenth-century, aliases: ["Law of April 6"]}
+  austin-imprudent-letter-1833: {title: "October 2, 1833 \"Imprudent Letter\"", author: stephen-f-austin, period: nineteenth-century, aliases: ["imprudent letter"]}
+  travis-feb-24-letter: {title: "February 24, 1836 Letter, \"To the People of Texas and All Americans in the World\"", author: william-travis, period: nineteenth-century, aliases: ["Travis"]}
+  houston-san-jacinto-report: {title: "Official Report on San Jacinto (dispatch to David G. Burnet)", author: sam-houston, period: nineteenth-century, aliases: ["Houston's own account", "official report"]}
+  constitution-republic-of-texas-1836: {title: "Constitution of the Republic of Texas, 1836", author: anonymous, period: nineteenth-century, aliases: ["Constitution of 1836", "Constitution of the Republic"]}
+  joint-resolution-annexation-1845: {title: "U.S. Joint Resolution for the Annexation of Texas, March 1, 1845", author: anonymous, period: nineteenth-century, aliases: ["joint resolution", "Joint Resolution"]}

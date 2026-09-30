@@ -1,0 +1,60 @@
+# Controlled vocabularies for entry frontmatter.
+# A value in a controlled field that is not listed here fails the index gate.
+# Adapted from optima-ela-encyclopedia/_meta/taxonomy.yml for the Social Studies
+# encyclopedia experiment (World History 6 + Texas History 7). Open fields (topics,
+# texts, authors, standards codes) are validated elsewhere, same as the ELA build.
+schema: 1
+controlled:
+  category:
+    - historical-concept
+    - historic-context
+    - primary-source
+    - geography
+    - civic-concept
+    - biography
+    - economics-concept
+  scope:
+    - general
+    - text-specific
+  status:
+    - draft
+    - extracted
+    - edited
+    - reviewed
+  rights:
+    - unchecked
+    - clear
+    - excerpt-flagged
+    - blocked
+  period:
+    - ""
+    - ancient
+    - medieval
+    - early-modern
+    - eighteenth-century
+    - nineteenth-century
+    - twentieth-century
+    - contemporary
+  course:
+    - wh6
+    - txhist7
+    - new
+  genre:
+    - ""
+  # ELA's literary-specific moves (close-read, imitation, vocabulary-in-context, etc.)
+  # dropped as inapplicable to history content; kept only the generic reasoning moves
+  # that carry over. Nothing seeds this field yet at harvest time (always []), so this
+  # list is a placeholder for whenever a later pass starts tagging moves for real.
+  moves:
+    - definition
+    - background
+    - comparison
+    - timeline
+    - summary
+    - inference
+    - evidence-note
+block_roles:
+  - content
+  - excerpt
+  - definition
+  - visual

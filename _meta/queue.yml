@@ -1,0 +1,5 @@
+# Topic queue: things to write that have no entry yet.
+# Empty — the standards audit (build step 6) that seeds coverage-gap items hasn't run for this
+# experiment (blocked, see NEXT-SESSION.md open items). Nothing fabricated here.
+schema: 1
+items: []

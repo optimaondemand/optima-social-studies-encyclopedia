@@ -1,0 +1,52 @@
+# Controlled topic vocabulary. Slug -> label + category.
+# Seeded from the key terms the lessons themselves bold (**term**), consolidating obvious
+# duplicates/case variants into one canonical slug (abdicate/abdicated -> abdication;
+# consultation/Consultation -> consultation; trade route/trade routes -> trade-routes;
+# "cosmic order and justice" and "ma'at" -> maat, since they are the same referent).
+#
+# Scope decision, flagged for the requester: matching optima-ela-encyclopedia's own
+# topics.yml (which holds only literary CONCEPTS, never character names), this file holds
+# only generalizable institutional/conceptual terms -- not the proper-noun figures, places,
+# or document titles that also appear bolded in these entries (Hammurabi, Sargon, Cyrus,
+# Jericho, the Cyrus Cylinder, the Behistun Inscription, etc.). Those remain discoverable
+# through entry titles and `sources[]`, not through this controlled vocabulary. If
+# cross-referencing "every entry that touches Hammurabi" or "every entry about Jericho" is
+# wanted later, that needs a separate figures/places field this schema does not have yet --
+# not something to bolt onto topics.yml without a real design decision.
+schema: 1
+topics:
+  # ---- historical concepts
+  arete: {label: Arete (Excellence), category: historical-concept}
+  colony: {label: Colony (vs. Garrison), category: historical-concept}
+  conquistador: {label: Conquistador, category: historical-concept}
+  cuneiform: {label: Cuneiform, category: historical-concept}
+  empire: {label: Empire (vs. Kingdom), category: historical-concept}
+  maat: {label: "Ma'at / Cosmic Order and Justice", category: historical-concept}
+  pomerium: {label: Pomerium, category: historical-concept}
+  prudence: {label: Prudence, category: historical-concept}
+  source-criticism: {label: Source Criticism (Primary vs. Secondary Evidence), category: historical-concept}
+  # ---- civic concepts
+  abdication: {label: Abdication, category: civic-concept}
+  alcalde: {label: Alcalde (Elected Magistrate), category: civic-concept}
+  centralism: {label: Centralism, category: civic-concept}
+  commoner: {label: Commoner (Legal Class), category: civic-concept}
+  conciliation: {label: Conciliation, category: civic-concept}
+  confederacy: {label: Confederacy, category: civic-concept}
+  consultation: {label: Consultation (Political Assembly), category: civic-concept}
+  convention: {label: Convention (Political Assembly), category: civic-concept}
+  criollos: {label: Criollos, category: civic-concept}
+  empresario: {label: Empresario, category: civic-concept}
+  eye-for-an-eye-justice: {label: Eye-for-an-Eye Justice (Lex Talionis), category: civic-concept}
+  federalism: {label: Federalism, category: civic-concept}
+  free-citizen: {label: Free Citizen (Legal Class), category: civic-concept}
+  interim-government: {label: Interim Government, category: civic-concept}
+  polis: {label: Polis, category: civic-concept}
+  priest-king: {label: Priest-King, category: civic-concept}
+  satrapy: {label: Satrapy, category: civic-concept}
+  vassal: {label: Vassal, category: civic-concept}
+  # ---- economics concepts
+  acequias: {label: Acequias (Irrigation Ditches), category: economics-concept}
+  encomienda: {label: Encomienda, category: economics-concept}
+  palace-economy: {label: Palace Economy, category: economics-concept}
+  trade-routes: {label: Trade Routes, category: economics-concept}
+  tribute: {label: Tribute, category: economics-concept}

@@ -1,0 +1,38 @@
+# Rough chronological order of the topical folders in optima-history, earliest first.
+# It is approximate on purpose: several folders span many eras or overlap (american-west, industrial-revolution,
+# the Texas folders), so each is placed by where its main story sits. Edit freely: reorder lines, fix a span, add a
+# folder. Folders not listed here appear after the listed ones, alphabetically. `span` is a short date hint taken
+# from each folder's own README. Used by the editor's table of contents (via _build/inventory.py) and by
+# _build/toc.py for the library README.
+order:
+  # --- earliest civilizations and the ancient Near East
+  - {folder: ancient-mesopotamia,            span: first farming villages to 539 BC}
+  - {folder: ancient-egypt,                  span: earliest kingdoms to 525 BC}
+  - {folder: ancient-harappan-indus-valley,  span: early farming (c. 7000 BC) to c. 1900 BC}
+  - {folder: predynastic-shang-china,        span: Neolithic cultures to c. 1046 BC}
+  - {folder: ancient-anatolia,               span: earliest farming to c. 546 BC}
+  - {folder: bronze-dark-age-greece,         span: Bronze Age to 776 BC}
+  - {folder: ancient-levant,                 span: earliest settlement to 539 BC}
+  - {folder: persian-near-east,              span: Persian Empire from c. 550 BC}
+  # --- Greece and Rome
+  - {folder: archaic-classical-greece,       span: 776 BC to 338 BC}
+  - {folder: hellenistic-world,              span: Alexander (336 BC) to Roman absorption}
+  - {folder: roman-founding-republic,        span: founding legends to Caesar's rise}
+  - {folder: roman-empire,                   span: Augustus to 476}
+  # --- medieval and early modern
+  - {folder: early-middle-ages,              span: 476 to 1000}
+  - {folder: high-middle-ages,               span: 1000 to 1300}
+  - {folder: age-of-exploration,             span: 1400s to 1700s}
+  # --- colonial North America through the world wars
+  - {folder: american-colonial-period,       span: Jamestown to the French and Indian War}
+  - {folder: spanish-republic-texas,         span: presidios and missions to annexation (1845)}
+  - {folder: american-revolution-founding,   span: 1763 to Washington's inauguration (1789)}
+  - {folder: industrial-revolution,          span: c. 1760s onward, global}
+  - {folder: american-early-republic,        span: 1789 to the War of 1812}
+  - {folder: jacksonian-westward-expansion,  span: after 1815 to the Mexican-American War}
+  - {folder: american-texas,                 span: statehood (1845) forward}
+  - {folder: american-west,                  span: 1804 to c. 1890}
+  - {folder: american-civil-war,             span: sectionalism to the end of Reconstruction (1877)}
+  - {folder: gilded-progressive,             span: 1877 to U.S. entry into World War I}
+  - {folder: roaring-20s-great-depression,   span: World War I entry to World War II entry}
+  - {folder: world-war-ii,                   span: through 1945}

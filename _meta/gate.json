@@ -1,0 +1,43 @@
+{
+ "entries": 72,
+ "paragraphs": 647,
+ "by_status": {
+  "extracted": 71,
+  "edited": 1
+ },
+ "by_area": {
+  "age-of-exploration": 8,
+  "ancient-anatolia": 1,
+  "ancient-egypt": 7,
+  "ancient-harappan-indus-valley": 1,
+  "ancient-levant": 4,
+  "ancient-mesopotamia": 12,
+  "archaic-classical-greece": 1,
+  "bronze-dark-age-greece": 3,
+  "persian-near-east": 6,
+  "predynastic-shang-china": 1,
+  "spanish-republic-texas": 28
+ },
+ "by_course_fit": {
+  "txhist7": 36,
+  "wh6": 36
+ },
+ "by_category": {
+  "historic-context": 20,
+  "biography": 14,
+  "geography": 8,
+  "historical-concept": 8,
+  "primary-source": 12,
+  "civic-concept": 9,
+  "economics-concept": 1
+ },
+ "manifest_pages_with_content": 72,
+ "entries_missing_for_pages": [],
+ "orphan_entries_not_in_manifest": [],
+ "paragraph_count_mismatch": [],
+ "duplicate_ids": [],
+ "frontmatter_problems": [],
+ "vocabulary_errors": [],
+ "vocabulary_error_count": 0,
+ "pass": true
+}

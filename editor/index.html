@@ -1,0 +1,1301 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Social Studies Encyclopedia Editor</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
+<style>
+:root{--navy:#0e1c42;--ink:#1a2340;--cyan:#1b6a9c;--gold:#c7922c;--bg:#f4f6fa;--line:#d9dee8;--ok:#2e7d32;--warn:#b26a00;--bad:#b3261e;--card:#fff}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;font:14px/1.45 "Segoe UI",Segoe,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:var(--navy);color:#fff;padding:10px 18px;display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+header h1{font-size:17px;margin:0;font-weight:600;letter-spacing:.2px}
+header .progress{flex:1;min-width:260px}
+.bar{height:10px;background:rgba(255,255,255,.18);border-radius:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--gold)}
+.bar.small{height:6px;background:#e6eaf2}.bar.small i{background:var(--cyan)}
+header .nums{font-size:12px;opacity:.9;margin-top:4px}
+button{font:inherit;padding:6px 11px;border:1px solid var(--line);background:#fff;border-radius:6px;cursor:pointer;color:var(--ink)}
+button.primary{background:var(--cyan);color:#fff;border-color:var(--cyan)}
+button.gold{background:var(--gold);color:#fff;border-color:var(--gold)}
+button.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+button:disabled{opacity:.5;cursor:default}
+main{display:block}
+main.open #list{display:none}
+#list{padding:12px 18px;min-width:0}
+main.tree #list{display:none}
+#tree{display:none;padding:12px 18px}
+main.tree:not(.open) #tree{display:block}
+button.ghost.pull{border-color:var(--gold);color:#ffe3a6}button.ghost.pull:hover{background:rgba(199,146,44,.25)}
+button.ghost.pull .paren{font-weight:400;opacity:.85;cursor:help;border-bottom:1px dotted rgba(255,255,255,.6)}
+button.ghost.on{background:rgba(255,255,255,.2);border-color:#fff}
+button.ghost.push{border-color:var(--cyan);color:#bfe6f7}button.ghost.push:hover{background:rgba(85,200,232,.22)}
+.pill{display:inline-block;min-width:18px;padding:0 6px;border-radius:9px;background:var(--gold);color:#fff;font-size:11.5px;font-weight:700;text-align:center}
+/* Push screen: the cart you review before anything is sent */
+#cart{display:none}
+main.cart #list,main.cart #tree{display:none}
+main.cart:not(.open) #cart{display:block}
+#cart .cartwrap{max-width:980px;margin:0 auto;padding:22px 24px 40px}
+#cart h2{margin:0 0 4px;font-size:22px}
+.cartnote{background:#fff7e6;border:1px solid var(--gold);border-radius:8px;padding:8px 12px;font-size:13px;margin:10px 0 14px}
+.cartempty{background:var(--card);border:1px dashed var(--line);border-radius:8px;padding:28px;text-align:center;color:#6b748a}
+.cartitem{background:var(--card);border:1px solid var(--line);border-radius:8px;margin:10px 0;padding:12px 14px}
+.cartitem.stale{border-color:var(--warn);background:#fffaf0}
+.cartrow{display:flex;gap:12px;align-items:flex-start}
+.cartrow input[type=checkbox]{width:18px;height:18px;margin-top:3px;accent-color:var(--cyan)}
+.cartitem h4{margin:0 0 2px;font-size:15.5px}
+.cartbtns{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.ctags{margin:6px 0 2px}.tag.warn{background:#fde9c9;color:#8a4b00}
+.cartdiff{margin:10px 0 0 30px;border-top:1px dashed var(--line);padding-top:8px}
+.cartdiff ins{background:#dff3df;text-decoration:none;color:#1d5b21}.cartdiff del{background:#fde2e0;text-decoration:line-through;color:#7a1c17}
+#cartBar{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);box-shadow:0 -4px 10px rgba(14,28,66,.08);padding:12px 24px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#cartBar .sum{flex:1;min-width:220px;font-size:13.5px}
+#cartBar button.step{padding:8px 14px}
+#drawer.dark .cartitem{background:#1c2029}
+#lessons{display:none}
+main.lessons #list,main.lessons #tree{display:none}
+main.lessons:not(.open) #lessons{display:grid;grid-template-columns:minmax(280px,400px) minmax(0,1fr);height:calc(100vh - var(--hh,58px))}
+#lside{display:flex;flex-direction:column;min-height:0;border-right:1px solid var(--line);background:#fff}
+#lside .lctl{padding:10px 12px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+#lside input[type=search]{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;width:100%}
+#llist{overflow:auto;flex:1}
+#llist .lrepo{position:sticky;top:0;z-index:2;background:var(--navy);color:#fff;padding:6px 12px;font-weight:600;font-size:13px}
+#llist .ldir{background:#eef2f8;padding:3px 12px;font:600 11.5px Consolas,monospace;color:var(--navy)}
+#llist .li{display:flex;gap:8px;align-items:baseline;padding:5px 12px;border-bottom:1px solid #eef0f5;cursor:pointer}
+#llist .li:hover{background:#f7f9fd}
+#llist .li.sel{background:#fff1d6;box-shadow:inset 3px 0 0 var(--gold)}
+#llist .li .nm{font:12px Consolas,monospace;color:#6b748a;flex:0 0 auto;max-width:48%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#llist .li .tt{font-size:13px;min-width:0;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#llist .li.other .tt,#llist .li.other .nm{color:#9aa2b4}
+#llist .li .dot{width:8px;height:8px;border-radius:50%;flex:0 0 8px;align-self:center;background:#c3c9d6}
+.lbtns{display:flex;gap:6px}.lbtns button{padding:3px 10px}
+#llist .lf{display:flex;align-items:center;gap:8px;padding:7px 12px;background:#eef2f8;border-bottom:1px solid var(--line);cursor:pointer;user-select:none}
+#llist .lf:hover{background:#e3eaf5}
+#llist .lf .chev{width:12px;font-size:11px;color:var(--navy);transition:transform .12s}
+#llist .lf.open .chev{transform:rotate(90deg)}
+#llist .lf .lfname{flex:1;min-width:0;display:flex;flex-direction:column}
+#llist .lf b{font:600 13px "Segoe UI",Arial,sans-serif;color:var(--navy);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#llist .lf small{font-size:11px;color:#6b748a;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#llist .lf .cnt{font-size:11.5px;color:#6b748a;white-space:nowrap}
+#llist .lf.empty b{color:#8a94a6;font-weight:500}
+#llist .lempty{padding:6px 12px 8px 32px;font-size:12px;color:#8a94a6;border-bottom:1px solid #eef0f5}
+#llist .li{padding-left:30px}
+#llist .li .wtag{font-size:10.5px;background:var(--cyan);color:#fff;border-radius:8px;padding:0 6px;flex:0 0 auto}
+#llist .li.wg .tt{color:#6b748a}
+#llist .li .dot.entry{background:var(--ok)}#llist .li .dot.no-content,#llist .li .dot.not-harvested{background:var(--warn)}
+#lview{overflow:auto;min-height:0;padding:20px 32px 60px}
+#lview .lv{max-width:780px;margin:0 auto}
+#lview h2.lvt{font-size:24px;line-height:1.25;margin:0 0 4px}
+#lview .lvmeta{font-size:12.5px;color:#6b748a;margin-bottom:14px}
+#lview .lvmeta code{font:12px Consolas,monospace}
+#lview .blk{font:17px/1.6 Georgia,"Times New Roman",serif;margin:0 0 10px}
+#lview h3.blk,#lview h4.blk,#lview h5.blk{font-family:"Segoe UI",Arial,sans-serif;color:var(--navy);margin:20px 0 6px;font-size:18px}
+#lview h4.blk,#lview h5.blk{font-size:15px}
+#lview .blk.li2{padding-left:18px;position:relative}#lview .blk.li2:before{content:"•";position:absolute;left:4px}
+#lview blockquote.blk{font-style:italic;border-left:3px solid var(--gold);padding-left:14px;margin-left:0}
+#hang{position:fixed;top:var(--hh,58px);right:28px;z-index:30;background:var(--navy);color:#ffd98a;border:1px solid var(--navy);border-top:none;border-radius:0 0 10px 10px;padding:7px 16px 8px;font-weight:600;box-shadow:0 3px 8px rgba(14,28,66,.3)}
+#hang:hover{background:var(--cyan);color:#fff}
+main:not(.lessons) ~ #hang,main.open ~ #hang{display:none}
+#lview .more{display:flex;gap:8px;align-items:center;margin-top:16px}
+@media (max-width:800px){main.lessons:not(.open) #lessons{grid-template-columns:1fr;height:auto}#llist{max-height:40vh}}
+#tree h3{margin:18px 0 4px;font-size:16px}
+#tree table{margin-bottom:8px}
+#tree td.path{font:12.5px Consolas,monospace;word-break:break-all}
+#tree tr.dir td{background:#eef2f8;font:600 12px Consolas,monospace;color:var(--navy)}
+#tree tr.other td{color:#6b748a}
+.fate{font-size:11px;padding:1px 7px;border-radius:10px;color:#fff;display:inline-block;white-space:nowrap}
+.fate.widget{background:var(--cyan)}.fate.entry{background:var(--ok)}.fate.no-content,.fate.not-harvested{background:var(--warn)}.fate.excluded,.fate.duplicate{background:#8a94a6}.fate.other{background:#c3c9d6;color:var(--ink)}
+#filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+#filters input,#filters select{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;background:#fff}
+#filters input[type=search]{min-width:240px}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 10px}
+.chip{font-size:12px;padding:2px 8px;border-radius:12px;background:#e8eef7;color:var(--navy);white-space:nowrap}
+.chip.cat{cursor:pointer;display:flex;gap:6px;align-items:center;background:#fff;border:1px solid var(--line)}
+.chip.cat b{font-weight:600}
+.chip.cat .bar.small{width:70px}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line);border-radius:8px;overflow:hidden;font-size:13px}
+th,td{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:#eef2f8;font-weight:600;cursor:pointer;user-select:none;position:sticky;top:0;z-index:1;white-space:nowrap}
+tr:hover td{background:#f7f9fd}
+tr.active td{background:#fff7e6}
+td.num{text-align:right;font-variant-numeric:tabular-nums}
+.st{font-size:11px;padding:1px 7px;border-radius:10px;color:#fff;display:inline-block}
+.st.extracted{background:#8a94a6}.st.edited{background:var(--warn)}.st.reviewed{background:var(--ok)}.st.draft{background:var(--cyan)}
+.flag{font-size:11px;color:var(--bad);margin-left:4px}
+.tag{font-size:11px;background:#eef2f8;border-radius:8px;padding:0 6px;margin:1px 2px 1px 0;display:inline-block;color:var(--navy)}
+.tag.std{background:#fbf1dc}
+.muted{color:#6b748a}
+a{color:var(--cyan)}
+#drawer{display:none;background:var(--bg)}
+main.open #drawer{display:block}
+#drawer .inner{padding:0 0 60px}
+.review{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:0;align-items:start}
+.reader{padding:22px 40px 60px;max-width:860px;margin:0 auto;width:100%}
+.rail{position:sticky;top:58px;height:calc(100vh - 58px);overflow:auto;background:#fff;border-left:1px solid var(--line);padding:14px 16px 40px}
+.rail fieldset{margin:0 0 12px}
+.rail .field{min-width:0}
+@media (max-width:1100px){.review{grid-template-columns:1fr}.rail{position:static;height:auto;border-left:none;border-top:1px solid var(--line)}}
+.topbar{position:sticky;top:58px;z-index:5;background:#fff;border-bottom:1px solid var(--line);padding:8px 18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.topbar .ttl{font-weight:600;font-size:15px;flex:1;min-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.reader h2.entry-title{font-size:26px;line-height:1.25;margin:6px 0 4px;text-wrap:balance}
+.reader h2.entry-title[contenteditable]:focus{outline:2px solid var(--cyan);outline-offset:4px;border-radius:4px}
+.reader .meta-line{font-size:13px;color:#6b748a;margin-bottom:18px}
+.para{position:relative;padding:6px 0 6px 44px;margin:0 0 6px;border-radius:6px}
+.para:hover{background:#fff}
+.para .gutter{position:absolute;left:0;top:10px;width:36px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.para .gutter input{width:18px;height:18px;cursor:pointer;accent-color:var(--ok)}
+.para .dot{width:8px;height:8px;border-radius:50%;background:transparent}
+.para.voice .dot{background:var(--bad)}
+.para.changed .dot{background:var(--warn)}
+.para.checked .ptext{color:#4b5566}
+.ptext{font:18px/1.6 Georgia,"Source Serif 4","Times New Roman",serif;color:var(--ink);max-width:70ch;padding:4px 6px;border-radius:4px;border:1px solid transparent;white-space:pre-wrap}
+.ptext:hover{border-color:var(--line)}
+.ptext:focus{outline:none;border-color:var(--cyan);background:#fff;box-shadow:0 0 0 3px rgba(27,106,156,.12)}
+.para.excerpt .ptext{font-style:italic;border-left:3px solid var(--gold);padding-left:14px}
+.para.definition .ptext{font-size:16px;background:#f7fafc}
+.ptool{display:none;position:absolute;right:0;top:-10px;gap:4px;font-size:11px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:2px 4px;align-items:center}
+.para:hover .ptool,.para:focus-within .ptool{display:flex}
+.ptool select,.ptool button{font-size:11px;padding:1px 5px;border:1px solid transparent;background:transparent}
+.ptool button:hover{border-color:var(--line)}
+.ptool .lab{color:#6b748a;padding:0 4px}
+.orig{display:none;margin:2px 0 10px 50px;max-width:70ch;font:15px/1.5 Georgia,serif;color:#6b748a;padding:6px 10px;border-left:3px solid var(--line)}
+.show-orig .orig{display:block}
+.orig del{background:#fde2e0;text-decoration:line-through;color:#7a1c17}.orig ins{background:#dff3df;text-decoration:none;color:#1d5b21}
+.secline{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--gold);font-weight:600;margin:22px 0 4px 50px}
+.addp{margin:8px 0 0 50px}
+.kbd-hint{font-size:12px;color:#6b748a;margin:14px 0 0 50px}
+fieldset.proposals{border-color:var(--gold);background:#fffaf0}
+.prop{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;padding:6px 0;border-bottom:1px dashed #ead9b3}
+.prop:last-of-type{border-bottom:none}
+button.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.field{display:flex;flex-direction:column;gap:3px;min-width:140px;flex:1}
+.field label{font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:#6b748a}
+.field input,.field select,.field textarea{font:inherit;padding:6px 8px;border:1px solid var(--line);border-radius:6px;width:100%}
+.field input.title{font-size:17px;font-weight:600}
+fieldset{border:1px solid var(--line);border-radius:8px;padding:10px 12px;margin:12px 0}
+legend{font-size:12px;color:#6b748a;padding:0 6px;text-transform:uppercase;letter-spacing:.4px}
+.block{border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:8px 0;background:#fff}
+.block.changed{border-color:var(--warn)}
+.block.checked{background:#f3faf3;border-color:#bfe3c1}
+.block .bh{display:flex;gap:8px;align-items:center;font-size:12px;color:#6b748a;margin-bottom:6px;flex-wrap:wrap}
+.block .bh .role{font-weight:600;color:var(--navy);text-transform:uppercase;font-size:11px}
+.block .bh .voice{color:var(--bad)}
+.block textarea{width:100%;font:15px/1.5 Georgia,"Times New Roman",serif;padding:8px;border:1px solid transparent;border-radius:6px;resize:vertical;min-height:60px;background:#fcfcfe}
+.block textarea:focus{border-color:var(--cyan);outline:none;background:#fff}
+.block.excerpt textarea{font-style:italic;border-left:4px solid var(--gold)}
+.block.definition textarea{background:#f7fafc}
+.diff{font:14px/1.5 Georgia,serif;padding:8px;background:#fafbfd;border-radius:6px;margin-top:6px}
+.diff del{background:#fde2e0;text-decoration:line-through;color:#7a1c17}.diff ins{background:#dff3df;text-decoration:none;color:#1d5b21}
+.sec{margin:14px 0 4px;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--gold);font-weight:600}
+.chipin{display:flex;gap:4px;flex-wrap:wrap;border:1px solid var(--line);border-radius:6px;padding:4px;min-height:34px;align-items:center}
+.chipin .tag{padding:2px 8px;font-size:12px;display:inline-flex;gap:6px;align-items:center}
+.chipin .tag b{cursor:pointer;color:#6b748a}
+.chipin input{border:none;outline:none;flex:1;min-width:120px;font:inherit;padding:4px}
+.visual{border:1px solid var(--line);border-radius:8px;padding:8px;margin:8px 0}
+.visual img{max-width:100%;border:1px solid #eee;border-radius:4px}
+#toast{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--navy);color:#fff;padding:10px 16px;border-radius:8px;display:none;z-index:50;max-width:80vw}
+.modal{position:fixed;inset:0;background:rgba(14,28,66,.45);display:none;align-items:center;justify-content:center;z-index:40}
+.modal.open{display:flex}
+.modal .box{background:#fff;border-radius:10px;padding:18px 20px;width:min(860px,92vw);max-height:88vh;overflow:auto}
+.modal textarea.yaml{width:100%;min-height:50vh;font:13px/1.4 Consolas,monospace}
+.sib{padding:4px 0;border-bottom:1px dashed #eee;font-size:13px;display:flex;justify-content:space-between;gap:8px}
+.sib a{cursor:pointer}
+kbd{font:12px Consolas,monospace;background:#eef2f8;padding:1px 5px;border-radius:4px}
+.sticky-actions{position:sticky;top:0;background:#fff;padding:8px 0;border-bottom:1px solid var(--line);z-index:2;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.small{font-size:12px}
+.who{color:#fff;opacity:.92;display:inline-flex;gap:8px;align-items:center;margin-left:auto}
+#signin{padding:40px 18px}
+#signin .card{max-width:640px;margin:0 auto;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:22px 26px}
+#signin h2{margin:0 0 8px;font-size:20px}
+#signin .steps{padding-left:20px;line-height:1.5}
+#signin .steps li{margin:6px 0}
+.hist{padding:6px 0;border-bottom:1px dashed #eee;font-size:13px}
+.hist .hwho{font-weight:600}
+.hist .hmsg{color:#6b748a}
+.hist a{cursor:pointer;margin-left:6px;color:var(--cyan)}
+.hpara{margin:10px 0;font:15px/1.5 Georgia,"Times New Roman",serif;padding:6px 10px;border-left:3px solid var(--line)}
+.hpara del{background:#fde2e0;text-decoration:line-through;color:#7a1c17}.hpara ins{background:#dff3df;text-decoration:none;color:#1d5b21}
+.lag{color:#ffd98a}
+.setup{flex-basis:100%;color:#ffd98a}
+.setup a{color:#fff;text-decoration:underline;cursor:pointer}
+/* ---- writing surface: calm page, library pane, focus mode, counts */
+header{position:sticky;top:0;z-index:20}
+.topbar{top:var(--hh,58px)}
+#drawer{--bg:#f7f5f0;background:var(--bg);color:var(--ink);min-height:calc(100vh - var(--hh,58px))}
+#drawer.sepia{--bg:#f2e8d2;--ink:#3b3024;--line:#dccfae;--card:#faf2df;--cyan:#8a5a1f}
+#drawer.dark{--bg:#14171d;--ink:#d6dae3;--line:#2c3340;--card:#1c2029;--cyan:#7fbde8;--gold:#d9a94a}
+#drawer.sepia .topbar,#drawer.sepia .rail,#drawer.sepia .lib,#drawer.sepia #statbar{background:#f8f0dd}
+#drawer.sepia input,#drawer.sepia select,#drawer.sepia textarea,#drawer.sepia .chipin,#drawer.sepia .block{background:#fffaf0}
+#drawer.dark .topbar,#drawer.dark .rail,#drawer.dark .lib,#drawer.dark #statbar{background:#191d25}
+#drawer.dark button,#drawer.dark select,#drawer.dark input,#drawer.dark textarea,#drawer.dark .chipin,#drawer.dark .block,#drawer.dark .ptool{background:#232836;color:var(--ink);border-color:var(--line)}
+#drawer.dark button.primary{background:var(--cyan);color:#10141a;border-color:var(--cyan)}
+#drawer.dark .para:hover,#drawer.dark .ptext:focus{background:#1c2029}
+#drawer.dark .tag,#drawer.dark .lib .lm{background:#2a3142;color:var(--ink)}
+#drawer.dark .lib .lit{border-bottom-color:#232836}#drawer.dark .lib .lit:hover{background:#1f2430}#drawer.dark .lib .lit.sel{background:#2b2a22}
+#drawer.dark fieldset.proposals,#drawer.dark .visual{background:#1c2029}
+#drawer.dark .orig,#drawer.dark .muted{color:#8f98ab}
+.reader{max-width:800px;padding:38px 52px 120px}
+.ptext{font-size:20px;line-height:1.75;max-width:none}
+.reader h2.entry-title{font:600 32px/1.25 Georgia,"Times New Roman",serif}
+.topbar .tools{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.topbar button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.review{grid-template-columns:minmax(0,1fr)}
+.rail,.lib{top:calc(var(--hh,58px) + var(--tbh,50px));height:calc(100vh - var(--hh,58px) - var(--tbh,50px))}
+.lib{position:sticky;overflow:auto;background:#fff;border-right:1px solid var(--line);display:none}
+@media (min-width:1100px){
+  .lib{display:block}
+  .review{grid-template-columns:250px minmax(0,1fr) 360px}
+  #drawer.nolib .review{grid-template-columns:minmax(0,1fr) 360px}
+  #drawer.norail .review{grid-template-columns:250px minmax(0,1fr)}
+  #drawer.nolib.norail .review,#drawer.focus .review{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:1099px){.rail{height:auto}}
+#liblist{padding-bottom:44px}
+#drawer.nolib .lib,#drawer.norail .rail,#drawer.focus .lib,#drawer.focus .rail{display:none}
+.lib .lq{position:sticky;top:0;z-index:2;background:inherit;padding:8px;border-bottom:1px solid var(--line)}
+.lib .lq input{width:100%;font:inherit;padding:5px 8px;border:1px solid var(--line);border-radius:6px}
+.lib .lc{background:var(--navy);color:#fff;padding:4px 10px;font-weight:600;font-size:12px}
+.lib .lm{background:#eef2f8;padding:2px 10px;font:600 11px Consolas,monospace;color:var(--navy)}
+.lib .lit{display:flex;gap:7px;align-items:baseline;padding:5px 10px;border-bottom:1px solid #eef0f5;cursor:pointer;font-size:13px}
+.lib .lit:hover{background:#f7f9fd}.lib .lit.sel{background:#fff1d6;box-shadow:inset 3px 0 0 var(--gold)}
+.lib .lit .t{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lib .lit .w{font-size:11px;color:#8a94a6}
+.lib .dot{width:8px;height:8px;border-radius:50%;flex:0 0 8px;align-self:center}
+.lib .dot.extracted{background:#8a94a6}.lib .dot.edited{background:var(--warn)}.lib .dot.reviewed{background:var(--ok)}.lib .dot.draft{background:var(--cyan)}
+#statbar{position:fixed;left:0;right:0;bottom:0;z-index:12;background:#fff;border-top:1px solid var(--line);padding:5px 18px;display:flex;gap:6px 22px;align-items:center;font-size:12px;color:#6b748a;flex-wrap:wrap}
+#statbar b{color:var(--ink)}
+#statbar input{width:84px;font:inherit;padding:2px 6px;border:1px solid var(--line);border-radius:5px}
+#statbar .bar.small{width:110px;display:inline-block;vertical-align:middle}
+#statbar .sp{flex:1}
+body.focusing header{display:none}
+body.focusing{--hh:0px}
+#drawer.focus .topbar,#drawer.focus #statbar{opacity:.18;transition:opacity .25s}
+#drawer.focus .topbar:hover,#drawer.focus #statbar:hover,#drawer.focus .topbar:focus-within,#drawer.focus #statbar:focus-within{opacity:1}
+#drawer.focus .meta-line,#drawer.focus .kbd-hint,#drawer.focus .secline,#drawer.focus .visual{opacity:.25}
+#drawer.focus .para:not(.cur) .ptext{opacity:.28;transition:opacity .2s}
+#drawer.focus .para .gutter{opacity:0}
+#drawer.focus .reader{padding-bottom:55vh}
+#fmtbar{position:fixed;z-index:60;display:none;background:var(--navy);border-radius:8px;padding:3px;gap:2px;box-shadow:0 4px 12px rgba(0,0,0,.3)}
+#fmtbar button{background:transparent;color:#fff;border:none;padding:3px 11px;font:600 15px Georgia,serif;border-radius:5px}
+#fmtbar button:hover{background:rgba(255,255,255,.22)}
+</style>
+</head>
+<body>
+<header>
+  <h1>Social Studies Encyclopedia · Editor</h1>
+  <div class="progress"><div class="bar"><i id="pbar" style="width:0%"></i></div><div class="nums" id="pnums">loading…</div></div>
+  <button class="gold" id="btnNext">Next unreviewed</button>
+  <button class="ghost" id="btnNew">+ New topic</button>
+  <button class="ghost" id="btnQueue">Queue <span id="qcount"></span></button>
+  <button class="ghost" id="btnVocab">Vocabularies</button>
+  <button class="ghost" id="btnLessons">Lessons</button>
+  <button class="ghost" id="btnEntries">Entries</button>
+  <button class="ghost" id="btnSource">File table</button>
+  <button class="ghost pull" id="btnPull" title="Download any new commits from the optima-history repo on GitHub into your local copy, then reload the lessons list."><b>↻ Refresh</b> <span class="paren" title="Pull: GitHub's word for downloading new commits from the repository into your local copy. It only fast-forwards, so it can never overwrite your work; if it can't, it tells you why. (Fetch just checks for news without changing anything; push is the opposite direction and sends your changes up.)">(Pull)</span></button>
+  <button class="ghost push" id="btnPush" title="Review everything you have applied before anything is sent. (Preview only for now: nothing is written to the lessons or sent to GitHub.)"><b>⇪ Push</b> <span class="pill" id="pushcount">0</span></button>
+  <button class="ghost" id="btnCsv">Export CSV</button>
+  <button class="ghost gh-only" id="btnActivity" hidden>Activity</button>
+  <span class="who gh-only small" id="who" hidden></span>
+  <span class="setup gh-only small" id="setup" hidden></span>
+</header>
+<section id="signin" hidden>
+  <div class="card">
+    <h2>Sign in to edit</h2>
+    <p>The entries live in the private GitHub repository <b id="siRepoName"></b>. Every save becomes a commit there under your own GitHub name, so the history of each entry shows who changed what and when.</p>
+    <ol class="steps">
+      <li>Your GitHub account needs write access to that repository. If you do not have it yet, ask the repository owner to add you as a collaborator.</li>
+      <li>Create a fine-grained token at <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>. Resource owner: <b id="siOwner"></b>. Repository access: <b>Only select repositories</b>, this one. Repository permissions: <b>Contents, Read and write</b>. Nothing else.</li>
+      <li>Paste the token below. It stays in this browser and is used only to talk to GitHub.</li>
+    </ol>
+    <div class="field"><label>Token</label><input id="siToken" type="password" autocomplete="off" placeholder="github_pat_…"></div>
+    <details class="small"><summary class="muted">Repository and branch</summary><div class="row"><div class="field"><label>owner/repo</label><input id="siRepo"></div><div class="field" style="max-width:160px"><label>Branch</label><input id="siBranch"></div></div></details>
+    <div class="row" style="margin-top:12px"><button class="primary" id="siGo">Sign in</button><span class="small" id="siMsg"></span></div>
+  </div>
+</section>
+<main id="main" class="lessons">
+  <section id="lessons">
+    <div id="lside">
+      <div class="lctl">
+        <input type="search" id="lq" placeholder="Filter by file name or page title…">
+        <div class="lbtns"><button class="small" id="lExpand" title="Open every topic folder">Expand all</button><button class="small" id="lCollapse" title="Close every topic folder to see the whole table of contents">Collapse all</button></div>
+        <label class="small muted"><input type="checkbox" id="lAll"> also list non-HTML files</label>
+        <span class="small muted" id="lcount"></span>
+      </div>
+      <div id="llist"><p class="muted small" style="padding:12px">Loading…</p></div>
+    </div>
+    <div id="lview"><p class="muted">The left side is a table of contents for the optima-history repo: one row per topical folder, in the order they sit in the repo. Click a folder to reveal its lessons and click again to hide them, or use <b>Expand all</b> and <b>Collapse all</b> to see the whole library at once or only its outline. Nothing is filtered out unless you type in the box. Select a lesson to read the top of it here. <kbd>↑</kbd> <kbd>↓</kbd> move through the open lessons.</p></div>
+  </section>
+  <section id="list">
+    <div class="chips" id="catchips"></div>
+    <div id="filters">
+      <input type="search" id="q" placeholder="Search title, text, topic, id…">
+      <select id="fStatus"><option value="">status: all</option><option>draft</option><option>extracted</option><option>edited</option><option>reviewed</option></select>
+      <select id="fArea"><option value="">topic area: all</option></select>
+      <select id="fCourse"><option value="">fits course: all</option></select>
+      <select id="fCat"><option value="">category: all</option></select>
+      <select id="fText"><option value="">text: all</option></select>
+      <select id="fTopic"><option value="">topic: all</option></select>
+      <select id="fFlag"><option value="">flags: any</option><option value="voice">voice-flagged</option><option value="changed">changed since extraction</option><option value="visual">has visual</option><option value="std">has standards</option><option value="nostd">no standards</option><option value="notext">no text tag</option><option value="proposals">has audit proposals</option><option value="ready">applied, ready to push</option></select>
+      <span class="muted small" id="count"></span>
+    </div>
+    <div style="overflow:auto;max-height:calc(100vh - 190px)">
+    <table id="tbl"><thead><tr>
+      <th data-k="title">Title</th><th data-k="area">Topic area</th><th data-k="course">Fits course</th><th data-k="category">Category</th>
+      <th data-k="paragraphs" class="num">¶</th><th data-k="words" class="num">Words</th><th data-k="voice_flagged" class="num">Voice</th>
+      <th>Tags</th><th>Pairs</th><th data-k="status">Status</th><th>Revised</th>
+    </tr></thead><tbody id="rows"></tbody></table>
+    </div>
+  </section>
+  <section id="tree">
+    <p class="muted small" style="margin:0 0 8px">Every file in the optima-history repo, in folder order, whether or not it became an entry. Read-only.</p>
+    <div id="filters">
+      <input type="search" id="tq" placeholder="Filter by path or page title…">
+      <select id="tfate"><option value="">show: everything</option><option value="entry">has an entry</option><option value="no-content">no prose harvested</option><option value="excluded">excluded pages</option><option value="duplicate">duplicates</option><option value="not-harvested">not harvested</option><option value="widget">widgets</option><option value="other">non-HTML files</option></select>
+      <button id="tRefresh" title="Re-scan optima-history on disk">Re-scan</button>
+      <span class="muted small" id="tcount"></span>
+    </div>
+    <div id="treeBody"><p class="muted">Loading…</p></div>
+  </section>
+  <section id="cart">
+    <div class="cartwrap">
+      <h2>Review before you push</h2>
+      <p class="muted" style="margin:0">Everything you have applied is listed here, like a cart before checkout. Nothing has been written to the lessons or sent to GitHub, and nothing will be until you place the order. Untick an item to leave it for later, or remove it to take it back out.</p>
+      <div class="cartnote"><b>Preview only.</b> <i>Place order</i> isn't connected yet: pressing it shows what it would do, but nothing is written or sent.</div>
+      <div id="cartList"></div>
+    </div>
+    <div id="cartBar">
+      <span class="sum" id="cartSum"></span>
+      <button class="small" id="cartAll">Select all</button><button class="small" id="cartNone">Select none</button>
+      <button class="step primary" id="order1" title="Step 1 writes the selected changes into the lesson files in your local optima-history folder and makes a local commit you could still undo.">1 · Write to lessons</button>
+      <button class="step primary" id="order2" title="Step 2 sends that commit to GitHub. It never forces anything, and stops if GitHub has moved ahead.">2 · Send to GitHub</button>
+    </div>
+  </section>
+  <aside id="drawer"><div class="inner" id="drawerInner"></div></aside>
+</main>
+<div id="fmtbar"><button data-f="bold" title="Bold (Ctrl+B)"><b>B</b></button><button data-f="italic" title="Italic (Ctrl+I)"><i>I</i></button><button data-f="removeFormat" title="Clear bold/italic">T<sub>x</sub></button></div>
+<button id="hang" hidden>✎ Edit this entry</button>
+<div id="toast"></div>
+
+<div class="modal" id="mPush"><div class="box">
+  <div class="row" style="justify-content:space-between"><h3 style="margin:0" id="pushTitle">Place order</h3><button onclick="closeModals()">Close</button></div>
+  <div class="cartnote"><b>Preview only.</b> Nothing was written to your lessons and nothing was sent to GitHub.</div>
+  <div id="pushBody"></div>
+</div></div>
+
+<div class="modal" id="mQueue"><div class="box">
+  <div class="row" style="justify-content:space-between"><h3 style="margin:0">Topic queue</h3><button onclick="closeModals()">Close</button></div>
+  <p class="muted small">Topics that need an entry. <b>Start</b> creates a draft entry you can write in the editor; the item stays here until you mark it done.</p>
+  <div id="queueList"></div>
+</div></div>
+
+<div class="modal" id="mNew"><div class="box">
+  <div class="row" style="justify-content:space-between"><h3 style="margin:0">New topic</h3><button onclick="closeModals()">Close</button></div>
+  <div class="row"><div class="field"><label>Title</label><input id="nTitle" placeholder="e.g. The Elizabethan stage"></div>
+  <div class="field" style="max-width:220px"><label>Category</label><select id="nCat"></select></div>
+  <div class="field" style="max-width:260px"><label>Topic area</label><select id="nArea"></select></div></div>
+  <div class="row"><div class="field"><label>Texts (slugs, comma-separated)</label><input id="nTexts" placeholder="hamlet"></div>
+  <div class="field"><label>Topics (slugs, comma-separated)</label><input id="nTopics" placeholder="dramatic-irony"></div></div>
+  <div class="field"><label>Notes / what it should cover</label><textarea id="nNotes" rows="3"></textarea></div>
+  <div class="row" style="margin-top:10px"><button class="primary" id="nAddQueue">Add to queue</button><button id="nStartNow">Add and start writing now</button></div>
+</div></div>
+
+<div class="modal" id="mVocab"><div class="box">
+  <div class="row" style="justify-content:space-between"><h3 style="margin:0">Manage vocabularies</h3><button onclick="closeModals()">Close</button></div>
+  <p class="muted small">Controlled fields accept only what these files list. Edit the YAML and save; the index gate re-runs. Topic slugs are what the other media repos tag against.</p>
+  <div class="row"><select id="vFile"><option value="_meta/taxonomy.yml">taxonomy.yml (category, status, period, moves…)</option><option value="_meta/topics.yml">topics.yml (topic slugs)</option><option value="_meta/texts.yml">texts.yml (works, authors, module defaults)</option></select><button class="primary" id="vSave">Save file</button><span id="vMsg" class="small muted"></span></div>
+  <textarea class="yaml" id="vText"></textarea>
+</div></div>
+
+<div class="modal" id="mHist"><div class="box">
+  <div class="row" style="justify-content:space-between"><h3 style="margin:0" id="hTitle">Earlier version</h3><button onclick="closeModals()">Close</button></div>
+  <p class="small muted" id="hMeta"></p>
+  <div id="hDiff"></div>
+  <div class="row" style="margin-top:10px"><button id="hRestore">Load this version into the editor</button><span class="small muted">Nothing changes in the repository until you save.</span></div>
+</div></div>
+
+<div class="modal" id="mAct"><div class="box">
+  <div class="row" style="justify-content:space-between"><h3 style="margin:0">Team activity</h3><button onclick="closeModals()">Close</button></div>
+  <p class="small muted">The most recent saves to entries, newest first. Each one is a commit in the repository.</p>
+  <div id="actSummary" class="chips"></div>
+  <div id="actList"></div>
+</div></div>
+
+<script>
+// ------------------------------------------------------------------ state
+const S = { ready: { schema: 1, items: {} }, index: [], tax: null, topics: null, texts: null, queue: {items: []}, evidence: {}, cited: {}, modlevel: {}, cur: null, curBody: null, curOrig: null, sort: {k: 'area', dir: 1}, settings: JSON.parse(localStorage.getItem('enc.settings') || '{}') };
+const $ = s => document.querySelector(s); const $$ = s => [...document.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const toast = (m, ms = 2600) => { const t = $('#toast'); t.textContent = m; t.style.display = 'block'; clearTimeout(t._h); t._h = setTimeout(() => t.style.display = 'none', ms); };
+const slug = s => s.normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^A-Za-z0-9]+/g, '-').replace(/^-|-$/g, '').toLowerCase().slice(0, 70);
+const words = s => (s.match(/[A-Za-z0-9'’]+/g) || []).length;
+
+// ------------------------------------------------------------------ backend
+const PRESET = { repo: 'optimaondemand/optima-social-studies-encyclopedia', branch: 'main', api: 'https://api.github.com' };
+const mode = () => (location.protocol === 'file:') ? 'file' : (/^(localhost|127\.)/.test(location.hostname) ? 'local' : 'github');
+const cfg = () => ({ repo: S.settings.repo || PRESET.repo, branch: S.settings.branch || PRESET.branch, api: S.settings.api || PRESET.api });
+const encPath = p => p.split('/').map(encodeURIComponent).join('/');
+const ghHeaders = extra => ({ Authorization: 'Bearer ' + S.settings.token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28', ...(extra || {}) });
+// cache: 'no-store' matters twice over: GitHub caches for 60 s, which would reopen a just-saved entry stale (and then 409 the next save),
+// and Chrome has served a metadata response from cache for a later raw-media request to the same URL.
+const gh = (p, o = {}) => fetch(`${cfg().api}/repos/${cfg().repo}/${p}`, { ...o, cache: 'no-store', headers: ghHeaders(o.headers) });
+const ghUser = () => fetch(`${cfg().api}/user`, { cache: 'no-store', headers: ghHeaders() });
+// Read a text file. In GitHub mode the blob sha comes back too; it is the lock a later write is checked against.
+async function readText(path, ref) {
+  if (mode() === 'github') {
+    if (!S.settings.token) throw new Error('not signed in');
+    const q = `?ref=${encodeURIComponent(ref || cfg().branch)}`;
+    const r = await gh(`contents/${encPath(path)}${q}`); if (!r.ok) throw new Error(path + ' ' + r.status);
+    const j = await r.json();
+    if (j.encoding === 'base64' && j.content) return { text: b64dec(j.content), sha: j.sha };
+    const raw = await gh(`contents/${encPath(path)}${q}`, { headers: { Accept: 'application/vnd.github.raw+json' } }); if (!raw.ok) throw new Error(path + ' ' + raw.status);
+    return { text: await raw.text(), sha: j.sha };
+  }
+  const r = await fetch('../' + path + '?t=' + Date.now()); if (!r.ok) throw new Error(path + ' ' + r.status);
+  return { text: await r.text() };
+}
+async function readBlobUrl(path) { // a binary file (visual PNG) as an object URL; GitHub mode only
+  const r = await gh(`contents/${encPath(path)}?ref=${encodeURIComponent(cfg().branch)}`, { headers: { Accept: 'application/vnd.github.raw+json' } }); if (!r.ok) throw new Error(path + ' ' + r.status);
+  return URL.createObjectURL(await r.blob());
+}
+// Write a text file. `sha` is the blob sha the caller read. If the file changed since, GitHub answers 409 and nothing is written.
+async function writeText(path, content, message, sha) {
+  if (mode() === 'file') throw new Error('Open through _build/serve.py (or the published editor) to save. file:// cannot write.');
+  if (mode() === 'local') {
+    const r = await fetch('/api/save', { method: 'POST', body: JSON.stringify({ path, content }) }); const j = await r.json();
+    if (!j.ok) throw new Error(j.error || 'save failed'); return j;
+  }
+  if (sha === undefined) { try { sha = (await readText(path)).sha; } catch (e) { sha = undefined; } }
+  const r = await gh(`contents/${encPath(path)}`, { method: 'PUT', body: JSON.stringify({ message: message || `Edit ${path}`, content: b64enc(content), branch: cfg().branch, sha }) });
+  if (r.status === 409 || r.status === 422) { const e = new Error('Someone else saved this file after you opened it. Reopen it to see their version, then make your change again.'); e.conflict = true; throw e; }
+  if (!r.ok) throw new Error('GitHub write failed: ' + r.status + ' ' + (await r.text()).slice(0, 200));
+  return await r.json();
+}
+async function rebuild() {
+  if (mode() !== 'local') return null;
+  const r = await fetch('/api/rebuild', { method: 'POST', body: '{}' }); return await r.json();
+}
+const b64enc = s => { const b = new TextEncoder().encode(s); let t = ''; for (let i = 0; i < b.length; i += 0x8000) t += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(t); };
+const b64dec = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\n/g, '')), c => c.charCodeAt(0)));
+// Commits touching a path, newest first. The index bot's rebuild commits are not edits and are left out unless asked for.
+async function commitsFor(path, n = 30, since, keepBots = false) {
+  const r = await gh(`commits?path=${encPath(path)}&sha=${encodeURIComponent(cfg().branch)}&per_page=${n}${since ? '&since=' + encodeURIComponent(since) : ''}`); if (!r.ok) throw new Error('commits ' + r.status);
+  return (await r.json()).filter(c => keepBots || c.commit?.author?.name !== 'index-bot').map(c => ({ sha: c.sha, who: c.commit?.author?.name || c.author?.login || 'unknown', login: c.author?.login || '', when: c.commit?.author?.date || '', msg: (c.commit?.message || '').split('\n')[0] }));
+}
+const ago = iso => { if (!iso) return ''; const s = (Date.now() - new Date(iso)) / 1000; if (s < 60) return 'just now'; if (s < 3600) return Math.floor(s / 60) + ' min ago'; if (s < 86400) return Math.floor(s / 3600) + ' hr ago'; if (s < 14 * 86400) return Math.floor(s / 86400) + ' d ago'; return iso.slice(0, 10); };
+const saveSettings = () => localStorage.setItem('enc.settings', JSON.stringify(S.settings));
+
+// ------------------------------------------------------------------ load
+async function loadAll() {
+  const [idx, tax, topics, texts, queue] = await Promise.all(['index.json', '_meta/taxonomy.yml', '_meta/topics.yml', '_meta/texts.yml', '_meta/queue.yml'].map(p => readText(p).then(r => r.text)));
+  S.index = JSON.parse(idx); S.tax = jsyaml.load(tax); S.topics = jsyaml.load(topics).topics; S.texts = jsyaml.load(texts); S.queue = jsyaml.load(queue) || { items: [] };
+  for (const [k, p] of [['evidence', '_meta/topic_evidence.json'], ['cited', '_meta/standards_cited_evidence.json'], ['modlevel', '_meta/standards_module_level.json']]) { try { S[k] = JSON.parse((await readText(p)).text); } catch (e) { S[k] = {}; } }
+  S.stdText = {}; for (const j of ['fl', 'tx', 'ms']) { try { const d = JSON.parse((await readText(`_meta/standards/${j}.json`)).text); for (const [c, v] of Object.entries(d)) S.stdText[c] = v.text; } catch (e) {} }
+  try { S.ready = JSON.parse((await readText('_meta/ready.json')).text); S.ready.items ||= {}; } catch (e) { S.ready = { schema: 1, items: {} }; }
+  fillFilters(); renderProgress(); renderTable(); renderPushCount(); $('#qcount').textContent = S.queue.items.filter(i => i.status !== 'done').length || '';
+  if (location.hash.length > 1 && !S.cur) { const id = decodeURIComponent(location.hash.slice(1)); if (S.index.some(x => x.id === id)) openEntry(id); }
+}
+function fillFilters() {
+  const opt = (sel, vals, label) => { const el = $(sel); el.innerHTML = `<option value="">${label}: all</option>` + vals.map(v => `<option>${esc(v)}</option>`).join(''); };
+  opt('#fArea', [...new Set(S.index.map(r => r.area).filter(Boolean))].sort(), 'topic area'); opt('#fCourse', S.tax.controlled.course, 'fits course'); opt('#fCat', S.tax.controlled.category, 'category');
+  opt('#fText', Object.keys(S.texts.texts).sort(), 'text'); opt('#fTopic', Object.keys(S.topics).sort(), 'topic');
+  $('#nCat').innerHTML = S.tax.controlled.category.map(c => `<option>${c}</option>`).join('');
+}
+function renderProgress() {
+  const n = S.index.length, rev = S.index.filter(r => r.status === 'reviewed').length, ed = S.index.filter(r => r.status === 'edited').length;
+  $('#pbar').style.width = (100 * rev / Math.max(n, 1)) + '%';
+  $('#pnums').textContent = `${rev} of ${n} entries reviewed · ${ed} edited, not yet reviewed · ${S.index.reduce((a, r) => a + r.paragraphs, 0)} paragraphs`;
+  if (S.lag) $('#pnums').innerHTML += ` · <span class="lag">${S.lag} save${S.lag > 1 ? 's' : ''} since the index was last rebuilt; statuses below come from the commit log</span>`;
+  const cats = {}; for (const r of S.index) { const c = cats[r.category] ||= { n: 0, rev: 0 }; c.n++; if (r.status === 'reviewed') c.rev++; }
+  $('#catchips').innerHTML = Object.entries(cats).sort().map(([k, v]) => `<span class="chip cat" data-cat="${k}"><b>${k}</b> ${v.rev}/${v.n}<span class="bar small"><i style="width:${100 * v.rev / v.n}%"></i></span></span>`).join('');
+  $$('.chip.cat').forEach(el => el.onclick = () => { $('#fCat').value = $('#fCat').value === el.dataset.cat ? '' : el.dataset.cat; renderTable(); });
+}
+function filtered() {
+  const q = $('#q').value.trim().toLowerCase(), st = $('#fStatus').value, co = $('#fCourse').value, ar = $('#fArea').value, ca = $('#fCat').value, tx = $('#fText').value, tp = $('#fTopic').value, fl = $('#fFlag').value;
+  let rows = S.index.filter(r => (!st || r.status === st) && (!co || r.course === co) && (!ar || r.area === ar) && (!ca || r.category === ca) && (!tx || (r.texts || []).includes(tx)) && (!tp || (r.topics || []).includes(tp)));
+  if (fl === 'voice') rows = rows.filter(r => r.voice_flagged > 0); if (fl === 'changed') rows = rows.filter(r => r.changed_since_extraction); if (fl === 'visual') rows = rows.filter(r => (r.visuals || []).length);
+  if (fl === 'std') rows = rows.filter(r => (r.standards_fl || []).length || (r.standards_tx || []).length || (r.standards_ccss || []).length); if (fl === 'nostd') rows = rows.filter(r => !(r.standards_fl || []).length && !(r.standards_tx || []).length && !(r.standards_ccss || []).length);
+  if (fl === 'notext') rows = rows.filter(r => !(r.texts || []).length);
+  if (fl === 'proposals') rows = rows.filter(r => r.proposals > 0);
+  if (fl === 'ready') rows = rows.filter(r => S.ready.items[r.id]);
+  if (q) rows = rows.filter(r => [r.title, r.id, r.area, r.course, r.module, ...(r.texts || []), ...(r.topics || []), ...(r.standards_fl || [])].join(' ').toLowerCase().includes(q));
+  const k = S.sort.k, d = S.sort.dir;
+  rows.sort((a, b) => { let x = a[k], y = b[k]; if (k === 'area' || k === 'course') { x = (a[k] || '') + '|' + (a.sources?.[0]?.path || ''); y = (b[k] || '') + '|' + (b.sources?.[0]?.path || ''); } return (x > y ? 1 : x < y ? -1 : 0) * d; });
+  return rows;
+}
+function siblings(r) { return S.index.filter(x => x.id !== r.id && x.area === r.area).sort((a, b) => (a.sources[0].path > b.sources[0].path ? 1 : -1)); }
+function renderTable() {
+  const rows = filtered(); $('#count').textContent = `${rows.length} shown`;
+  $('#rows').innerHTML = rows.map(r => `<tr data-id="${r.id}" class="${S.cur && S.cur.id === r.id ? 'active' : ''}">
+    <td><a href="#" data-open="${r.id}">${esc(r.title)}</a><div class="muted small">${esc(r.id)}</div></td>
+    <td class="small">${esc(r.area)}</td><td class="small">${esc(r.course)}<div class="muted">${esc(r.module)}</div></td><td class="small">${r.category}${r.scope === 'general' ? '<div class="muted">general</div>' : ''}</td>
+    <td class="num">${r.paragraphs}</td><td class="num">${r.words}</td><td class="num">${r.voice_flagged || ''}</td>
+    <td>${(r.texts || []).map(t => `<span class="tag">${t}</span>`).join('')}${(r.topics || []).map(t => `<span class="tag">${t}</span>`).join('')}${(r.standards_fl || []).map(t => `<span class="tag std">${t}</span>`).join('')}</td>
+    <td class="small">${siblings(r).length} lineage${(r.pairs_with || []).length ? ` · ${r.pairs_with.length} curated` : ''}</td>
+    <td><span class="st ${r.status}">${r.status}</span>${S.ready.items[r.id] ? '<div class="small" style="color:var(--ok)">⇪ ready to push</div>' : ''}${r.publish ? '<div class="small muted">published</div>' : ''}${r.proposals ? `<div class="small" style="color:var(--warn)">${r.proposals} proposed</div>` : ''}</td>
+    <td class="small">${r.changed_since_extraction ? '<span style="color:var(--warn)">changed</span>' : '<span class="muted">as extracted</span>'}${r._who ? `<div class="muted">${esc(r._who)}</div>` : ''}</td></tr>`).join('');
+  $$('#rows a[data-open]').forEach(a => a.onclick = e => { e.preventDefault(); openEntry(a.dataset.open); });
+}
+
+// ------------------------------------------------------------------ entry parsing / serialising
+function splitFront(text) { const m = text.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/); return { fm: jsyaml.load(m[1]), body: m[2] }; }
+function parseBody(body) {
+  const blocks = []; let section = null, cur = null;
+  const parts = body.split(/\n?<!-- (section: [^>]*|block \d+ [^>]*) -->\n?/);
+  parts.forEach((p, i) => {
+    if (i % 2 === 1) { if (p.startsWith('section: ')) section = p.slice(9).trim(); else { const m = p.match(/block (\d+) role=(\S+)(.*)/); cur = { ordinal: +m[1], role: m[2], flags: m[3].trim() ? m[3].trim().split(/\s+/) : [], section }; } }
+    else { const t = p.trim(); if (cur && t) { cur.text = cur.role === 'excerpt' ? t.replace(/^> ?/gm, '') : t; blocks.push(cur); cur = null; } }
+  });
+  return blocks;
+}
+function buildBody(blocks) {
+  let out = [], sec = Symbol();
+  for (const b of blocks) { if ((b.section || '') !== sec) { sec = b.section || ''; if (sec) out.push(`\n<!-- section: ${sec} -->`); } out.push(`\n<!-- block ${b.ordinal} role=${b.role}${b.flags.length ? ' ' + b.flags.join(' ') : ''} -->`); out.push(b.role === 'excerpt' ? '> ' + b.text.trim() : b.text.trim()); }
+  return out.join('\n').replace(/^\n/, '') + '\n';
+}
+function serialize(fm, blocks) { return '---\n' + jsyaml.dump(fm, { sortKeys: false, lineWidth: 1000, noRefs: true, quotingType: '"' }) + '---\n' + buildBody(blocks); }
+
+// word diff (LCS) -----------------------------------------------------------
+function wordDiff(a, b) {
+  const A = a.split(/(\s+)/), B = b.split(/(\s+)/); const n = A.length, m = B.length; if (n * m > 4e6) return null;
+  const L = Array.from({ length: n + 1 }, () => new Uint16Array(m + 1));
+  for (let i = n - 1; i >= 0; i--) for (let j = m - 1; j >= 0; j--) L[i][j] = A[i] === B[j] ? L[i + 1][j + 1] + 1 : Math.max(L[i + 1][j], L[i][j + 1]);
+  let i = 0, j = 0, out = '';
+  while (i < n && j < m) { if (A[i] === B[j]) { out += esc(A[i]); i++; j++; } else if (L[i + 1][j] >= L[i][j + 1]) { out += `<del>${esc(A[i])}</del>`; i++; } else { out += `<ins>${esc(B[j])}</ins>`; j++; } }
+  while (i < n) out += `<del>${esc(A[i++])}</del>`; while (j < m) out += `<ins>${esc(B[j++])}</ins>`; return out;
+}
+
+// ------------------------------------------------------------------ entry editor
+async function openEntry(id) {
+  const r = S.index.find(x => x.id === id); if (!r) return;
+  const { text, sha } = await readText(r.file); const { fm, body } = splitFront(text);
+  let orig = null; try { orig = parseBody(splitFront((await readText(r.file.replace(/^entries\//, '_original/'))).text).body); } catch (e) { orig = null; }
+  S.cur = { row: r, fm, blocks: parseBody(body), orig, reviewed: new Set(fm.reviewed_blocks || []), sha };
+  $('#main').classList.add('open'); renderDrawer(); renderTable(); S.dirty = false;
+  if (mode() === 'github') { loadHistory(r.file); loadVisualImages(); }
+  $('#drawer').scrollTop = 0; window.scrollTo(0, 0);
+}
+function chipInput(id, values, options, placeholder) {
+  return `<div class="chipin" id="${id}" data-values='${esc(JSON.stringify(values || []))}'>${(values || []).map(v => `<span class="tag">${esc(v)}<b data-rm="${esc(v)}">×</b></span>`).join('')}<input list="${id}-dl" placeholder="${placeholder || 'add…'}"><datalist id="${id}-dl">${(options || []).map(o => `<option value="${esc(o)}">`).join('')}</datalist></div>`;
+}
+function wireChip(id, validate) {
+  const el = document.getElementById(id); const inp = el.querySelector('input');
+  const get = () => JSON.parse(el.dataset.values); const set = v => { el.dataset.values = JSON.stringify(v); el.querySelectorAll('.tag').forEach(t => t.remove()); v.slice().reverse().forEach(x => { const s = document.createElement('span'); s.className = 'tag'; s.innerHTML = `${esc(x)}<b data-rm="${esc(x)}">×</b>`; el.insertBefore(s, el.firstChild); }); wireRm(); };
+  const wireRm = () => el.querySelectorAll('b[data-rm]').forEach(b => b.onclick = () => set(get().filter(x => x !== b.dataset.rm)));
+  inp.onkeydown = e => { if ((e.key === 'Enter' || e.key === ',') && inp.value.trim()) { e.preventDefault(); const v = inp.value.trim().replace(/,$/, ''); const err = validate ? validate(v) : null; if (err) { toast(err); return; } if (!get().includes(v)) set([...get(), v]); inp.value = ''; } };
+  inp.onchange = () => { if (inp.value.trim()) inp.onkeydown({ key: 'Enter', preventDefault() {} }); };
+  wireRm(); return get;
+}
+// ---- inline markdown <-> html for the reading view (bold/italic only; the entry format allows nothing else)
+// ---- inline markdown <-> html for the reading view (bold/italic only; the entry format allows nothing else)
+// ---- inline markdown <-> html for the reading view (bold/italic only; the entry format allows nothing else)
+function mdToHtml(t) { return esc(t).replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>').replace(/(^|[^*])\*([^*\n]+)\*(?!\*)/g, '$1<i>$2</i>'); }
+function htmlToMd(el) {
+  const walk = n => { if (n.nodeType === 3) return n.nodeValue; if (n.nodeType !== 1) return ''; const inner = [...n.childNodes].map(walk).join(''); const tag = n.tagName.toLowerCase();
+    if (tag === 'b' || tag === 'strong') return inner.trim() ? `**${inner.trim()}**` : ''; if (tag === 'i' || tag === 'em') return inner.trim() ? `*${inner.trim()}*` : ''; if (tag === 'br') return ' '; if (tag === 'div' || tag === 'p') return ' ' + inner + ' '; return inner; };
+  return walk(el).replace(/ /g, ' ').replace(/\s+/g, ' ').trim();
+}
+function renderDrawer() {
+  const c = S.cur, fm = c.fm, r = c.row, T = S.tax.controlled;
+  const sel = (name, val, opts) => `<select data-fm="${name}">${opts.map(o => `<option ${o === (val ?? '') ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select>`;
+  const sibs = siblings(r); const sameText = S.index.filter(x => x.id !== r.id && (x.texts || []).some(t => (fm.texts || []).includes(t)) && x.area !== r.area).slice(0, 12);
+  const ml = S.modlevel[`${r.course}|${r.module}`] || S.modlevel[`${r.course}|*`] || {};
+  const origMap = Object.fromEntries((c.orig || []).map(b => [b.ordinal, b.text]));
+  const src = fm.sources[0]; const rows = filtered(); const pos = rows.findIndex(x => x.id === r.id);
+  let lastSec = Symbol();
+  const paras = c.blocks.map((b, i) => {
+    const o = origMap[b.ordinal]; const changed = o !== undefined && o.trim() !== b.text.trim();
+    const secline = (b.section || '') !== lastSec ? (lastSec = b.section || '', b.section ? `<div class="secline">${esc(b.section)}</div>` : '') : '';
+    return `${secline}<div class="para ${b.role} ${b.flags.includes('voice') || b.flags.includes('imperative') ? 'voice' : ''} ${changed ? 'changed' : ''} ${c.reviewed.has(b.ordinal) ? 'checked' : ''}" data-i="${i}">
+      <div class="gutter" title="${b.flags.includes('voice') ? 'teacher voice: address to the student, may need rewording' : ''}${changed ? ' · changed since extraction' : ''}"><input type="checkbox" class="bchk" ${c.reviewed.has(b.ordinal) ? 'checked' : ''} title="Mark this paragraph proofread"><span class="dot"></span></div>
+      <div class="ptool"><span class="lab">¶${b.ordinal} · ${b.role}${b.flags.includes('voice') ? ' · teacher voice' : ''}${b.flags.includes('imperative') ? ' · instruction' : ''}${b.flags.includes('in_visual') ? ' · in visual' : ''}${b.flags.includes('added') ? ' · added' : ''}</span>
+        <select class="brole">${['content', 'excerpt', 'definition'].map(x => `<option ${x === b.role ? 'selected' : ''}>${x}</option>`).join('')}</select><button class="bdel" title="Remove this paragraph from the entry">remove</button></div>
+      <div class="ptext" contenteditable="true" spellcheck="true">${mdToHtml(b.text)}</div>
+    </div><div class="orig">${o === undefined ? '<i>added paragraph, no original</i>' : (changed ? (wordDiff(o, b.text) ?? esc(o)) : `<span class="muted">original, unchanged</span>`)}</div>`;
+  }).join('');
+
+  $('#drawerInner').innerHTML = `
+  <div class="topbar">
+    <button id="eClose">← Back to list</button>
+    <span class="ttl">${esc(fm.title)}</span>
+    <span class="st ${fm.status}">${fm.status}</span>
+    <label class="small"><input type="checkbox" id="eShowOrig" data-nodirty> show original text</label>
+    <span class="tools"><button id="tLib" title="Show or hide the entry library">Library</button><button id="tRail" title="Show or hide tags, standards and status">Details</button><button id="tFocus" title="Focus mode (Ctrl+Shift+F, Esc to leave)">Focus</button><label class="small"><input type="checkbox" id="tTw" data-nodirty> typewriter</label><select id="tTheme" data-nodirty title="Page theme"><option value="">Paper</option><option value="sepia">Sepia</option><option value="dark">Dark</option></select></span>
+    <button id="ePrev" ${pos <= 0 ? 'disabled' : ''}>‹ Prev</button><button id="eNextRow" ${pos < 0 || pos >= rows.length - 1 ? 'disabled' : ''}>Next ›</button>
+    <button class="primary" id="eSave" title="Keep a draft of your edits. Nothing else changes.">Save</button>${applyControls(r)}
+  </div>
+  <div class="review">
+    ${libHtml()}
+    <div class="reader" id="reader">
+      <h2 class="entry-title" id="eTitle" contenteditable="true" spellcheck="true">${esc(fm.title)}</h2>
+      <div class="meta-line">${esc(r.area)} · ${fm.category} · fits ${esc(r.course)} ${esc(r.module)}${fm.texts?.length ? ' · ' + fm.texts.map(t => S.texts.texts[t]?.title || t).join(', ') : ''} · ${c.blocks.length} paragraphs · <a href="${esc(src.url)}" target="_blank" rel="noopener">source lesson</a>${fm.reading_refs?.length ? ` · embedded reading not harvested` : ''}</div>
+      ${paras}
+      <button id="bAdd" class="small addp">+ add a paragraph</button>
+      <div class="kbd-hint">Click any paragraph and type to revise it. <kbd>Enter</kbd> starts a new paragraph at the cursor; <kbd>Backspace</kbd> at the start of one joins it to the paragraph above. Select text for bold and italic (<kbd>Ctrl</kbd>+<kbd>B</kbd>, <kbd>Ctrl</kbd>+<kbd>I</kbd>). Tick the box beside a paragraph when it reads right. Red dot: written in the teacher's classroom voice. Amber dot: changed since extraction. <kbd>Ctrl</kbd>+<kbd>S</kbd> saves.</div>
+      ${(fm.visuals || []).length ? `<div class="secline" style="margin-left:0">Visuals — teachers can pull text only, visual only, or paired</div>` : ''}
+      ${(fm.visuals || []).map((v, i) => `<div class="visual" data-vi="${i}">
+          <div class="row small"><span class="tag">${esc(v.label)}</span><span class="muted">${esc(v.file)}</span>
+            <select class="vstatus" style="margin-left:auto">${T.status.map(x => `<option ${x === (v.status || 'extracted') ? 'selected' : ''}>${x}</option>`).join('')}</select></div>
+          <img src="${mode() === 'github' ? '' : '../visuals/' + esc(v.file.replace(/\.html$/, '.png'))}" data-vfile="visuals/${esc(v.file.replace(/\.html$/, '.png'))}" alt="${esc(v.alt || '')}" loading="lazy" onerror="this.style.display='none'">
+          <div class="row"><div class="field"><label>Alt text</label><input class="valt" value="${esc(v.alt || '')}"></div><div class="field"><label>Caption</label><input class="vcap" value="${esc(v.caption || '')}"></div>
+          <div class="field" style="max-width:220px"><label>Illustrates ¶ (ordinals)</label><input class="vill" value="${esc((v.illustrates || []).join(', '))}"></div></div>
+        </div>`).join('')}
+    </div>
+    <aside class="rail">
+      <fieldset><legend>Entry</legend>
+        <div class="field"><label>Category</label>${sel('category', fm.category, T.category)}</div>
+        <div class="row"><div class="field"><label>Scope</label>${sel('scope', fm.scope, T.scope)}</div><div class="field"><label>Status</label>${sel('status', fm.status, T.status)}</div></div>
+        <div class="row"><div class="field"><label>Rights</label>${sel('rights', fm.rights, T.rights)}</div><div class="field"><label>Publish</label><label class="small"><input type="checkbox" data-fm="publish" ${fm.publish ? 'checked' : ''} ${fm.status === 'reviewed' ? '' : 'disabled'}> ${fm.status === 'reviewed' ? 'to student site' : 'needs reviewed'}</label></div></div>
+        <p class="small muted" style="margin:6px 0 0">Source ${esc(src.repo)} @ ${src.sha.slice(0, 7)} · ${r.words} words</p>
+      </fieldset>
+      <fieldset><legend>Tags</legend>
+        <div class="field"><label>Topics</label>${chipInput('cTopics', fm.topics, Object.keys(S.topics).sort(), 'add topic slug…')}</div>
+        <div class="field"><label>Texts</label>${chipInput('cTexts', fm.texts, Object.keys(S.texts.texts).sort(), 'add text slug…')}</div>
+        <div class="field"><label>Authors</label>${chipInput('cAuthors', fm.authors, [...new Set(Object.values(S.texts.texts).map(t => t.author).filter(Boolean))].sort(), 'add author…')}</div>
+        <div class="row"><div class="field"><label>Period</label>${sel('period', fm.period, T.period)}</div><div class="field"><label>Genre</label>${sel('genre', fm.genre, T.genre)}</div></div>
+        <div class="field"><label>Pedagogical moves</label>${chipInput('cMoves', fm.moves, T.moves, 'add move…')}</div>
+      </fieldset>
+      ${(fm.proposed_standards?.length || fm.proposed_topics?.length || fm.category_suggestion || fm.texts_suggestion?.length) ? `<fieldset class="proposals"><legend>Proposed by the audit — accept or reject</legend>
+        ${(() => { const ps = fm.proposed_standards || []; const row = (p, i) => `<div class="prop" data-ps="${i}"><div><span class="tag std">${esc(p.code)}</span> <span class="small muted">${p.j.toUpperCase()} · ${p.confidence === 'verified' ? 'verified by the check' : p.confidence + ' confidence'}</span><div class="small">${esc(S.stdText?.[p.code] || p.why || '')}</div><div class="small muted">“${esc(p.evidence)}”</div></div><div class="row" style="flex-wrap:nowrap"><button class="small ok" data-acc="s${i}">Accept</button><button class="small" data-rej="s${i}">Reject</button></div></div>`;
+          const strong = ps.map((p, i) => [p, i]).filter(([p]) => p.confidence !== 'low'), low = ps.map((p, i) => [p, i]).filter(([p]) => p.confidence === 'low');
+          return strong.map(([p, i]) => row(p, i)).join('') + (low.length ? `<details class="small"><summary class="muted">${low.length} low-confidence proposal${low.length > 1 ? 's' : ''} — the evidence is a directive or a thin paragraph; usually reject</summary>${low.map(([p, i]) => row(p, i)).join('')}</details>` : ''); })()}
+        ${(fm.proposed_topics || []).map((p, i) => `<div class="prop" data-pt="${i}"><div><span class="tag">${esc(p.slug)}</span> <span class="small muted">topic</span><div class="small muted">“${esc(p.evidence)}”</div></div><div class="row" style="flex-wrap:nowrap"><button class="small ok" data-acc="t${i}">Accept</button><button class="small" data-rej="t${i}">Reject</button></div></div>`).join('')}
+        ${fm.category_suggestion ? `<div class="prop"><div>Category → <b>${esc(fm.category_suggestion.category)}</b><div class="small muted">${esc(fm.category_suggestion.why || '')}</div></div><div class="row" style="flex-wrap:nowrap"><button class="small ok" data-acc="c">Accept</button><button class="small" data-rej="c">Reject</button></div></div>` : ''}
+        ${(fm.texts_suggestion || []).map((t, i) => `<div class="prop"><div>Text → <span class="tag">${esc(t)}</span> <span class="small muted">${esc(S.texts.texts[t]?.title || '')}</span></div><div class="row" style="flex-wrap:nowrap"><button class="small ok" data-acc="x${i}">Accept</button><button class="small" data-rej="x${i}">Reject</button></div></div>`).join('')}
+        <p class="small muted">Accepting moves the tag into the entry; rejecting discards it. Either way, save afterwards.</p>
+      </fieldset>` : ''}
+      <fieldset><legend>Standards</legend>
+        <div class="field"><label>Florida B.E.S.T.</label>${chipInput('cFl', fm.standards_fl, Object.keys(ml), 'ELA.9.R.1.3')}</div>
+        <div class="field"><label>Texas TEKS</label>${chipInput('cTx', fm.standards_tx, [], '110.36(b)(6)(A)')}</div>
+        <div class="field"><label>CCSS (MS diocesan)</label>${chipInput('cCc', fm.standards_ccss, [], 'RL.9-10.3')}</div>
+        ${(fm.standards_cited || []).length ? `<p class="small muted">Cited by the teacher crosswalk: ${fm.standards_cited.map(x => `<span class="tag std">${x}</span>`).join('')}</p>` : ''}
+        ${Object.keys(ml).length ? `<details class="small"><summary class="muted">Module-level codes from the crosswalk (${Object.keys(ml).length}) — suggestions</summary>${Object.entries(ml).map(([k, v]) => `<div><span class="tag std">${k}</span> <span class="muted">${esc(v[0])}</span></div>`).join('')}</details>` : ''}
+      </fieldset>
+      <fieldset><legend>Pairs</legend>
+        <div class="field"><label>Curated pairs</label>${chipInput('cPairs', fm.pairs_with, S.index.map(x => x.id), 'entry id…')}</div>
+        <div class="field"><label>See also (student-visible)</label>${chipInput('cSee', fm.see_also, S.index.map(x => x.id), 'entry id…')}</div>
+        <div class="sec">Same topic area (${sibs.length})</div>
+        ${sibs.map(x => `<div class="sib"><a data-open="${x.id}">${esc(x.title)}</a><span class="st ${x.status}">${x.status}</span></div>`).join('') || '<div class="muted small">none</div>'}
+        ${sameText.length ? `<div class="sec">Same text, other topic areas</div>${sameText.map(x => `<div class="sib"><a data-open="${x.id}">${esc(x.title)}</a><span class="muted small">${esc(x.area)}</span></div>`).join('')}` : ''}
+      </fieldset>
+      ${mode() === 'github' ? `<fieldset id="histBox"><legend>History</legend><div class="muted small">Loading…</div></fieldset>` : ''}
+      <fieldset><legend>Notes</legend><div class="field"><textarea data-fm="notes" rows="3" placeholder="teacher/builder only">${esc(fm.notes || '')}</textarea></div>
+        ${S.evidence[r.id] ? `<p class="small muted">Topic evidence: ${Object.entries(S.evidence[r.id]).map(([k, v]) => `<b>${k}</b> ← ${esc(v)}`).join(' · ')}</p>` : ''}</fieldset>
+    </aside>
+  </div>
+  <div id="statbar"><span id="stPara"></span><span id="stEntry"></span><span class="sp"></span><span>Goal <input id="goalIn" type="number" min="0" step="50" placeholder="words" data-nodirty> <span class="bar small"><i id="goalBar" style="width:0"></i></span> <span id="goalPct"></span></span></div>`;
+
+  // wiring
+  $('#eClose').onclick = () => { if (S.dirty && !confirm(LEAVE_MSG)) return; S.cur = null; S.dirty = false; $('#main').classList.remove('open'); applyUI(); renderTable(); if ($('#main').classList.contains('cart')) renderCart(); };
+  $('#eSave').onclick = saveEntry;
+  $('#eApply')?.addEventListener('click', applyEntry); $('#eUndo')?.addEventListener('click', () => unapply(r.id));
+  $('#ePrev').onclick = () => pos > 0 && goEntry(rows[pos - 1].id); $('#eNextRow').onclick = () => pos < rows.length - 1 && goEntry(rows[pos + 1].id);
+  $('#eShowOrig').onchange = e => $('#reader').classList.toggle('show-orig', e.target.checked);
+  $('#eTitle').oninput = () => { $('.topbar .ttl').textContent = $('#eTitle').innerText.trim(); };
+  $$('#reader .ptext').forEach(p => { p.onkeydown = paraKey; p.onpaste = e => { e.preventDefault(); document.execCommand('insertText', false, (e.clipboardData || window.clipboardData).getData('text').replace(/\s+/g, ' ')); }; });
+  $$('#reader .bchk').forEach(ch => ch.onchange = () => { const el = ch.closest('.para'), i = +el.dataset.i, ord = c.blocks[i].ordinal; ch.checked ? c.reviewed.add(ord) : c.reviewed.delete(ord); el.classList.toggle('checked', ch.checked); });
+  $$('#reader .bdel').forEach(b => b.onclick = () => { const i = +b.closest('.para').dataset.i; if (confirm('Remove this paragraph from the entry? The original stays in _original for reference.')) { collectBlocks(); c.blocks.splice(i, 1); renderDrawer(); } });
+  $('#bAdd').onclick = () => { collectBlocks(); c.blocks.push({ ordinal: nextOrdinal(), role: 'content', flags: ['added'], section: c.blocks.at(-1)?.section || null, text: '' }); renderDrawer(); const last = $$('#reader .ptext').at(-1); last.focus(); };
+  ['cTopics', 'cTexts', 'cAuthors', 'cMoves', 'cPairs', 'cSee'].forEach(id => wireChip(id, id === 'cTopics' ? v => S.topics[v] ? null : `"${v}" is not in topics.yml — add it under Vocabularies first` : id === 'cTexts' ? v => S.texts.texts[v] ? null : `"${v}" is not in texts.yml — add it under Vocabularies first` : id === 'cMoves' ? v => T.moves.includes(v) ? null : `"${v}" is not a listed move` : (id === 'cPairs' || id === 'cSee') ? v => S.index.some(x => x.id === v) ? null : `no entry with id "${v}"` : null));
+  wireChip('cFl', v => /^ELA\.(K12|\d{1,2})\.[A-Z]+\.\d+\.\d+$/.test(v) ? null : 'Florida codes look like ELA.9.R.1.3'); wireChip('cTx', v => /^\d{3}\.\d+\([a-z]\)\(\d+\)(\([A-Z]\))?(\([ivx]+\))?$/.test(v) ? null : 'TEKS codes look like 110.36(b)(6)(A)'); wireChip('cCc', v => /^(RL|RI|W|SL|L|RH|RST|WHST)\.(\d{1,2}|9-10|11-12|K)\.\d+[a-z]?$/.test(v) ? null : 'CCSS codes look like RL.9-10.3');
+  $$('#drawerInner a[data-open]').forEach(a => a.onclick = () => goEntry(a.dataset.open));
+  const decide = (key, accept) => {
+    collectBlocks(); syncChipsToFm();
+    const kind = key[0], i = +key.slice(1);
+    if (kind === 's') { const p = fm.proposed_standards[i]; if (accept) { const f = { fl: 'standards_fl', tx: 'standards_tx', ms: 'standards_ccss' }[p.j]; fm[f] = [...new Set([...(fm[f] || []), p.code])]; (fm.standards_accepted ||= []).push({ code: p.code, evidence: p.evidence, from: 'audit' }); } fm.proposed_standards.splice(i, 1); if (!fm.proposed_standards.length) delete fm.proposed_standards; }
+    if (kind === 't') { const p = fm.proposed_topics[i]; if (accept) fm.topics = [...new Set([...(fm.topics || []), p.slug])]; fm.proposed_topics.splice(i, 1); if (!fm.proposed_topics.length) delete fm.proposed_topics; }
+    if (kind === 'c') { if (accept) fm.category = fm.category_suggestion.category; delete fm.category_suggestion; }
+    if (kind === 'x') { const t = fm.texts_suggestion[i]; if (accept) fm.texts = [...new Set([...(fm.texts || []), t])]; fm.texts_suggestion.splice(i, 1); if (!fm.texts_suggestion.length) delete fm.texts_suggestion; }
+    renderDrawer(); toast(accept ? 'Accepted — save to keep it.' : 'Rejected — save to keep it.');
+  };
+  $$('.proposals [data-acc]').forEach(b => b.onclick = () => decide(b.dataset.acc, true));
+  $$('.proposals [data-rej]').forEach(b => b.onclick = () => decide(b.dataset.rej, false));
+  $('select[data-fm="status"]').onchange = e => { const cb = $('input[data-fm="publish"]'); cb.disabled = e.target.value !== 'reviewed'; if (cb.disabled) cb.checked = false; };
+  wireWriting();
+}
+function syncChipsToFm() {
+  const fm = S.cur.fm; const g = id => { const el = document.getElementById(id); return el ? JSON.parse(el.dataset.values) : null; };
+  const map = { cTopics: 'topics', cTexts: 'texts', cAuthors: 'authors', cMoves: 'moves', cPairs: 'pairs_with', cSee: 'see_also', cFl: 'standards_fl', cTx: 'standards_tx', cCc: 'standards_ccss' };
+  for (const [id, k] of Object.entries(map)) { const v = g(id); if (v) fm[k] = v; }
+  $$('[data-fm]').forEach(el => { const k = el.dataset.fm; fm[k] = el.type === 'checkbox' ? el.checked : el.value; });
+  if (!fm.notes) delete fm.notes;
+}
+function collectBlocks() {
+  const c = S.cur; $$('#reader .para').forEach(el => { const i = +el.dataset.i; c.blocks[i].text = htmlToMd(el.querySelector('.ptext')); c.blocks[i].role = el.querySelector('.brole').value; });
+  const t = $('#eTitle'); if (t) c.fm.title = t.innerText.replace(/\s+/g, ' ').trim() || c.fm.title;
+}
+async function saveEntry() {
+  if (!S.cur) return false;
+  const c = S.cur, fm = c.fm; collectBlocks();
+  c.blocks = c.blocks.filter(b => b.text.trim());
+  $$('[data-fm]').forEach(el => { const k = el.dataset.fm; fm[k] = el.type === 'checkbox' ? el.checked : el.value; });
+  const g = id => JSON.parse(document.getElementById(id).dataset.values);
+  fm.topics = g('cTopics'); fm.texts = g('cTexts'); fm.authors = g('cAuthors'); fm.moves = g('cMoves'); fm.pairs_with = g('cPairs'); fm.see_also = g('cSee');
+  fm.standards_fl = g('cFl'); fm.standards_tx = g('cTx'); fm.standards_ccss = g('cCc');
+  if (!fm.notes) delete fm.notes;
+  (fm.visuals || []).forEach((v, i) => { const el = document.querySelector(`.visual[data-vi="${i}"]`); if (!el) return; v.status = el.querySelector('.vstatus').value; v.alt = el.querySelector('.valt').value; v.caption = el.querySelector('.vcap').value; v.illustrates = el.querySelector('.vill').value.split(/[,\s]+/).filter(Boolean).map(Number); if (!v.alt) delete v.alt; if (!v.caption) delete v.caption; });
+  // status logic
+  const origMap = Object.fromEntries((c.orig || []).map(b => [b.ordinal, b.text.trim()]));
+  const changed = c.blocks.some(b => origMap[b.ordinal] === undefined || origMap[b.ordinal] !== b.text.trim()) || c.blocks.length !== (c.orig || c.blocks).length;
+  if (changed && fm.status === 'extracted') fm.status = 'edited';
+  const allChecked = c.blocks.length && c.blocks.every(b => c.reviewed.has(b.ordinal));
+  if (allChecked && fm.status !== 'reviewed' && confirm('Every paragraph is checked. Mark this entry reviewed?')) fm.status = 'reviewed';
+  if (fm.status !== 'reviewed') fm.publish = false;
+  fm.reviewed_blocks = [...c.reviewed].filter(o => c.blocks.some(b => b.ordinal === o)).sort((a, b) => a - b);
+  fm.paragraphs = c.blocks.length; fm.words = c.blocks.reduce((a, b) => a + words(b.text.replace(/\*/g, '')), 0); fm.voice_flagged = c.blocks.filter(b => b.flags.includes('voice')).length;
+  fm.reviewed_by = fm.reviewed_by || undefined; if (fm.status === 'reviewed') { fm.reviewed_by = S.settings.user?.name || S.settings.name || fm.reviewed_by || 'editor'; fm.reviewed_at = new Date().toISOString().slice(0, 10); } else { delete fm.reviewed_by; delete fm.reviewed_at; }
+  fm.edited_at = new Date().toISOString().slice(0, 10);
+  try {
+    const res = await writeText(c.row.file, serialize(fm, c.blocks), `Edit ${fm.id} (${fm.status})`, S.cur.sha);
+    if (res && res.content && res.content.sha) S.cur.sha = res.content.sha;
+    toast('Saved ' + fm.id); const rb = await rebuild();
+    if (rb && rb.gate && rb.gate.pass === false) toast('Saved, but the index gate FAILED — see _meta/gate.json', 6000);
+    if (mode() === 'local') { S.index = JSON.parse((await readText('index.json')).text); } else { patchRow(fm, c.blocks); try { await writeIndexRow(S.index.find(x => x.id === fm.id), `Rebuild index for ${fm.id}`); } catch (e) { toast('Saved, but the shared list could not be updated: ' + e.message, 9000); } }
+    const row = S.index.find(x => x.id === fm.id); if (row) { S.cur.row = row; } renderProgress(); renderTable();
+    await openEntry(fm.id);
+    return true;
+  } catch (e) { toast((e.conflict ? '' : 'Save failed: ') + e.message, e.conflict ? 10000 : 7000); return false; }
+}
+
+// ------------------------------------------------------------------ writing surface
+// library pane, focus + typewriter mode, live counts and goals, bold/italic, Enter/Backspace to split and join paragraphs
+const LEAVE_MSG = 'You have unsaved changes in this entry. Leave without saving?';
+const UI = (() => { try { return JSON.parse(localStorage.getItem('enc.ui') || '{}'); } catch (e) { return {}; } })();
+const saveUI = () => { try { localStorage.setItem('enc.ui', JSON.stringify(UI)); } catch (e) {} };
+const goalKey = () => 'enc.goal.' + S.cur.fm.id;
+const getGoal = () => { try { return +localStorage.getItem(goalKey()) || 0; } catch (e) { return 0; } };
+const nextOrdinal = () => Math.max(0, ...S.cur.blocks.map(b => b.ordinal), ...(S.cur.orig || []).map(b => b.ordinal)) + 1;
+async function goEntry(id) { if (S.dirty && !confirm(LEAVE_MSG)) return; await openEntry(id); }
+addEventListener('beforeunload', e => { if (S.dirty && S.cur) { e.preventDefault(); e.returnValue = ''; } });
+const markDirty = e => { if (S.cur && e.target.closest && e.target.closest('#drawerInner') && !e.target.closest('[data-nodirty]')) S.dirty = true; };
+document.addEventListener('input', markDirty); document.addEventListener('change', markDirty);
+
+const natCmp = (a, b) => { const A = a.split(/(\d+)/), B = b.split(/(\d+)/); for (let i = 0; i < Math.min(A.length, B.length); i++) { if (A[i] === B[i]) continue; if (i % 2) return +A[i] - +B[i]; return A[i] < B[i] ? -1 : 1; } return A.length - B.length; };
+function libList() {
+  const q = (S.libq || '').trim().toLowerCase(), cur = S.cur?.row.id; let lc = null, lm = null;
+  const rows = S.index.filter(r => !q || (r.title + ' ' + r.id + ' ' + r.area).toLowerCase().includes(q))
+    .sort((a, b) => a.area === b.area ? natCmp(a.sources?.[0]?.path || '', b.sources?.[0]?.path || '') : ((a.area || '') > (b.area || '') ? 1 : -1));
+  return rows.map(r => {
+    let h = ''; if (r.area !== lc) { lc = r.area; h += `<div class="lc">${esc(r.area)}</div>`; }
+    return h + `<div class="lit ${r.id === cur ? 'sel' : ''}" data-id="${esc(r.id)}" title="${esc(r.title)} · ${r.status}"><span class="dot ${r.status}"></span><span class="t">${esc(r.title)}</span><span class="w">${r.words}</span></div>`;
+  }).join('') || '<p class="muted small" style="padding:10px">Nothing matches.</p>';
+}
+const libHtml = () => `<aside class="lib"><div class="lq"><input type="search" id="libq" data-nodirty placeholder="Filter entries…" value="${esc(S.libq || '')}"></div><div id="liblist">${libList()}</div></aside>`;
+function wireLib() {
+  const bind = () => $$('#liblist .lit').forEach(el => el.onclick = () => { if (el.dataset.id !== S.cur?.row.id) goEntry(el.dataset.id); });
+  bind(); $('#libq').oninput = e => { S.libq = e.target.value; $('#liblist').innerHTML = libList(); bind(); };
+  const lib = $('.lib'), sel = $('#liblist .lit.sel'); if (lib && sel) lib.scrollTop = sel.offsetTop - lib.clientHeight / 2;
+}
+
+function applyUI() {
+  const d = $('#drawer'), open = $('#main').classList.contains('open');
+  d.classList.toggle('sepia', UI.theme === 'sepia'); d.classList.toggle('dark', UI.theme === 'dark');
+  d.classList.toggle('nolib', UI.lib === false); d.classList.toggle('norail', UI.rail === false); d.classList.toggle('focus', !!S.focus);
+  document.body.classList.toggle('focusing', !!S.focus && open);
+  $('#tLib')?.classList.toggle('on', UI.lib !== false); $('#tRail')?.classList.toggle('on', UI.rail !== false); $('#tFocus')?.classList.toggle('on', !!S.focus);
+  const tb = $('.topbar'); if (tb) document.documentElement.style.setProperty('--tbh', tb.offsetHeight + 'px');
+}
+function toggleFocus() { S.focus = !S.focus; applyUI(); if (S.focus && !$('#reader .ptext:focus')) $('#reader .ptext')?.focus({ preventScroll: true }); toast(S.focus ? 'Focus mode. Esc to leave.' : 'Focus mode off.', 1600); }
+document.addEventListener('keydown', e => {
+  if (!S.cur) return;
+  if (e.key === 'Escape' && S.focus) { S.focus = false; applyUI(); }
+  if ((e.ctrlKey || e.metaKey) && e.shiftKey && e.key.toLowerCase() === 'f') { e.preventDefault(); toggleFocus(); }
+});
+addEventListener('resize', () => { if (S.cur) applyUI(); });
+
+// counts + goal
+function updateStats() {
+  if (!S.cur || !$('#statbar')) return;
+  const ps = $$('#reader .ptext'), txt = ps.map(p => p.textContent), W = txt.reduce((a, t) => a + words(t), 0), C = txt.reduce((a, t) => a + t.length, 0);
+  const s = getSelection(), sel = s.rangeCount && !s.isCollapsed && inReader(s.anchorNode) ? s.toString().trim() : '', i = S.curPara;
+  $('#stPara').innerHTML = sel ? `<b>${words(sel)}</b> words selected` : (i >= 0 && txt[i] !== undefined ? `¶ ${i + 1} of ${ps.length}: <b>${words(txt[i])}</b> words · ${txt[i].length} characters` : `${ps.length} paragraphs`);
+  $('#stEntry').innerHTML = `Entry: <b>${W.toLocaleString()}</b> words · ${C.toLocaleString()} characters · ${W ? Math.max(1, Math.round(W / 200)) : 0} min read`;
+  const g = +$('#goalIn').value || 0; $('#goalBar').style.width = g ? Math.min(100, 100 * W / g) + '%' : '0%'; $('#goalPct').textContent = g ? `${Math.round(100 * W / g)}% of ${g}` : 'no goal set';
+}
+const inReader = n => { const el = n && (n.nodeType === 1 ? n : n.parentElement); return !!(el && el.closest('#reader .ptext')); };
+
+// typewriter scrolling: keep the line being typed near the middle of the window
+function typewriter() {
+  if (!(S.focus && UI.tw !== false)) return;
+  const s = getSelection(); if (!s.rangeCount || !inReader(s.anchorNode)) return;
+  const r = s.getRangeAt(0).cloneRange(); r.collapse(false);
+  const rect = r.getClientRects()[0] || (s.anchorNode.nodeType === 1 ? s.anchorNode : s.anchorNode.parentElement).getBoundingClientRect();
+  const dy = rect.top - innerHeight * 0.45; if (Math.abs(dy) > 24) scrollBy(0, dy);
+}
+
+// selection toolbar (bold / italic only: the entry format allows nothing else)
+document.addEventListener('selectionchange', () => {
+  const bar = $('#fmtbar'), s = getSelection();
+  if (!S.cur || !s.rangeCount || s.isCollapsed || !inReader(s.anchorNode)) bar.style.display = 'none';
+  else { const rc = s.getRangeAt(0).getBoundingClientRect(); bar.style.display = 'flex'; bar.style.left = Math.max(8, rc.left + rc.width / 2 - bar.offsetWidth / 2) + 'px'; bar.style.top = Math.max(8, rc.top - bar.offsetHeight - 8) + 'px'; }
+  updateStats();
+});
+$$('#fmtbar button').forEach(b => { b.onmousedown = e => e.preventDefault(); b.onclick = () => document.execCommand(b.dataset.f); });
+
+// Enter splits a paragraph at the cursor; Backspace at the start joins it to the one above
+function focusPara(i, off) {
+  const el = $$('#reader .ptext')[i]; if (!el) return; el.focus({ preventScroll: true });
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), r = document.createRange(); let n = off, node, last = null, done = false;
+  while ((node = w.nextNode())) { last = node; if (n <= node.nodeValue.length) { r.setStart(node, n); done = true; break; } n -= node.nodeValue.length; }
+  if (!done) { if (last) r.setStart(last, last.nodeValue.length); else r.setStart(el, 0); }
+  r.collapse(true); const s = getSelection(); s.removeAllRanges(); s.addRange(r); el.scrollIntoView({ block: 'nearest' });
+}
+function splitPara(p) {
+  const c = S.cur, i = +p.closest('.para').dataset.i, s = getSelection(); if (!s.rangeCount) return;
+  const rg = s.getRangeAt(0); if (!rg.collapsed) rg.deleteContents();
+  const before = document.createRange(), after = document.createRange();
+  before.selectNodeContents(p); before.setEnd(rg.startContainer, rg.startOffset); after.selectNodeContents(p); after.setStart(rg.startContainer, rg.startOffset);
+  const md = r => { const d = document.createElement('div'); d.appendChild(r.cloneContents()); return htmlToMd(d); };
+  const a = md(before), b = md(after);
+  collectBlocks(); const blk = c.blocks[i]; blk.text = a; c.reviewed.delete(blk.ordinal);
+  c.blocks.splice(i + 1, 0, { ordinal: nextOrdinal(), role: blk.role, flags: ['added'], section: blk.section, text: b });
+  S.dirty = true; renderDrawer(); focusPara(i + 1, 0);
+}
+function mergeUp(p) {
+  const c = S.cur, i = +p.closest('.para').dataset.i; if (i === 0) return;
+  collectBlocks(); const prev = c.blocks[i - 1], cur = c.blocks[i];
+  if (prev.role !== cur.role || (prev.section || '') !== (cur.section || '')) { toast('These two paragraphs have a different role or section, so they can’t be joined.'); return; }
+  const d = document.createElement('div'); d.innerHTML = mdToHtml(prev.text); const at = d.textContent.length;
+  prev.text = (prev.text + ' ' + cur.text).trim(); c.reviewed.delete(prev.ordinal); c.blocks.splice(i, 1);
+  S.dirty = true; renderDrawer(); focusPara(i - 1, at);
+}
+function atStart(p) { const s = getSelection(); if (!s.rangeCount || !s.isCollapsed) return false; const r = document.createRange(); r.selectNodeContents(p); r.setEnd(s.anchorNode, s.anchorOffset); return r.toString() === ''; }
+function paraKey(e) {
+  const p = e.currentTarget, mod = e.ctrlKey || e.metaKey;
+  if (mod && !e.shiftKey && (e.key === 'b' || e.key === 'i')) { e.preventDefault(); document.execCommand(e.key === 'b' ? 'bold' : 'italic'); return; }
+  if (e.key === 'Enter' && !e.shiftKey && !mod && !e.isComposing) { e.preventDefault(); splitPara(p); return; }
+  if (e.key === 'Backspace' && !mod && atStart(p)) { e.preventDefault(); mergeUp(p); }
+}
+
+function wireWriting() {
+  S.curPara = -1; applyUI();
+  $('#tLib').onclick = () => { UI.lib = UI.lib === false; saveUI(); applyUI(); };
+  $('#tRail').onclick = () => { UI.rail = UI.rail === false; saveUI(); applyUI(); };
+  $('#tFocus').onclick = toggleFocus;
+  const tw = $('#tTw'); tw.checked = UI.tw !== false; tw.onchange = () => { UI.tw = tw.checked; saveUI(); };
+  const th = $('#tTheme'); th.value = UI.theme || ''; th.onchange = () => { UI.theme = th.value; saveUI(); applyUI(); };
+  wireLib();
+  const gi = $('#goalIn'); gi.value = getGoal() || ''; gi.oninput = () => { try { localStorage.setItem(goalKey(), gi.value || '0'); } catch (e) {} updateStats(); };
+  const rd = $('#reader');
+  rd.addEventListener('focusin', e => { const pa = e.target.closest && e.target.closest('.para'); $$('#reader .para.cur').forEach(x => x.classList.remove('cur')); if (pa) { pa.classList.add('cur'); S.curPara = +pa.dataset.i; } updateStats(); });
+  rd.addEventListener('input', () => { updateStats(); typewriter(); });
+  rd.addEventListener('keyup', e => { if (/^(Arrow|Home|End|Page)/.test(e.key)) typewriter(); });
+  updateStats();
+}
+
+// ------------------------------------------------------------------ next unreviewed
+$('#btnNext').onclick = () => { const rows = filtered(); const i = S.cur ? rows.findIndex(r => r.id === S.cur.row.id) : -1; const nxt = rows.slice(i + 1).find(r => r.status !== 'reviewed') || rows.find(r => r.status !== 'reviewed'); if (nxt) openEntry(nxt.id); else toast('Nothing unreviewed in the current filter.'); };
+
+// ------------------------------------------------------------------ queue + new topic
+// ---- source file browser: everything on disk in optima-history, uncurated
+const FATE_LABEL = { widget: 'widget', entry: 'has entry', 'no-content': 'no prose harvested', excluded: 'excluded', duplicate: 'duplicate', 'not-harvested': 'not harvested', other: 'non-HTML' };
+const fmtSize = n => n < 1024 ? n + ' B' : n < 1048576 ? (n / 1024).toFixed(1) + ' KB' : (n / 1048576).toFixed(1) + ' MB';
+async function loadInventory() {
+  try { S.inv = JSON.parse((await readText('_meta/source_inventory.json')).text); }
+  catch (e) { S.inv = null; $('#treeBody').innerHTML = '<p class="muted">No inventory yet. Click Re-scan (needs the local server).</p>'; return; }
+  renderTree(); renderLessons();
+}
+function renderTree() {
+  if (!S.inv) return;
+  const q = $('#tq').value.trim().toLowerCase(), fate = $('#tfate').value; let shown = 0, total = 0;
+  const byId = Object.fromEntries(S.index.map(r => [r.id, r]));
+  $('#treeBody').innerHTML = Object.entries(S.inv).map(([repo, d]) => {
+    if (d.missing) return `<h3>${esc(repo)}</h3><p class="muted">Folder not found next to this repo.</p>`;
+    const counts = {}; d.files.forEach(f => counts[f.fate] = (counts[f.fate] || 0) + 1); total += d.files.length;
+    const files = d.files.filter(f => (!fate || f.fate === fate) && (!q || (f.path + ' ' + (f.title || '')).toLowerCase().includes(q))); shown += files.length;
+    let lastDir = null;
+    const rows = files.map(f => {
+      const i = f.path.lastIndexOf('/'), dir = i < 0 ? '(root)' : f.path.slice(0, i), name = f.path.slice(i + 1);
+      const head = dir !== lastDir ? (lastDir = dir, `<tr class="dir"><td colspan="5">${esc(dir)}/</td></tr>`) : '';
+      const e = f.entry && byId[f.entry];
+      const link = f.fate === 'entry' && e ? `<a href="#" data-open="${esc(f.entry)}">${esc(e.title)}</a> <span class="muted small">${e.paragraphs} ¶ · ${e.status}</span>` : (f.why ? `<span class="muted small">${esc(f.why)}</span>` : '');
+      return `${head}<tr class="${f.fate === 'other' ? 'other' : ''}"><td class="path">${esc(name)}</td><td class="small">${esc(f.title || '')}</td><td><span class="fate ${f.fate}">${FATE_LABEL[f.fate]}</span></td><td>${link}</td><td class="num small muted">${fmtSize(f.size)}</td></tr>`;
+    }).join('');
+    const sum = Object.entries(counts).map(([k, v]) => `${v} ${FATE_LABEL[k]}`).join(' · ');
+    return `<h3>${esc(repo)} <span class="muted small" style="font-weight:400">${d.files.length} files · ${sum}</span></h3><table><thead><tr><th>File</th><th>Page title</th><th>What happened</th><th>Entry / note</th><th class="num">Size</th></tr></thead><tbody>${rows || '<tr><td colspan="5" class="muted">Nothing matches.</td></tr>'}</tbody></table>`;
+  }).join('');
+  $('#tcount').textContent = `${shown} of ${total} files shown`;
+  $$('#treeBody a[data-open]').forEach(a => a.onclick = e => { e.preventDefault(); openEntry(a.dataset.open); });
+}
+function setView(v) {
+  if (S.cur && S.dirty && !confirm(LEAVE_MSG)) return; S.dirty = false;
+  const m = $('#main'); m.classList.toggle('lessons', v === 'lessons'); m.classList.toggle('tree', v === 'tree'); m.classList.toggle('cart', v === 'cart'); m.classList.remove('open'); S.cur = null;
+  $('#btnPush').classList.toggle('on', v === 'cart'); $('#btnLessons').classList.toggle('on', v === 'lessons'); $('#btnEntries').classList.toggle('on', v === 'entries'); $('#btnSource').classList.toggle('on', v === 'tree');
+  applyUI(); if (v === 'entries') renderTable(); if (v === 'cart') renderCart();
+}
+$('#btnLessons').onclick = () => setView('lessons'); $('#btnEntries').onclick = () => setView('entries'); $('#btnSource').onclick = () => setView('tree');
+$('#btnLessons').classList.add('on');
+const fitHeader = () => document.documentElement.style.setProperty('--hh', $('header').offsetHeight + 'px');
+fitHeader(); addEventListener('resize', fitHeader);
+
+// ---- lessons: every page in optima-history in folder order; the pane on the right shows the top of the selected one
+const L = { items: [], sel: -1, blocks: [], shown: 0 };
+const L_STEP = 20;
+// table of contents: topical folders that open and close; which ones are open is remembered in this browser
+const LOPEN = (() => { try { return new Set(JSON.parse(localStorage.getItem('enc.lopen') || '[]')); } catch (e) { return new Set(); } })();
+const saveOpen = () => { try { localStorage.setItem('enc.lopen', JSON.stringify([...LOPEN])); } catch (e) {} };
+const ROOT = '(repo root)';
+const folderOf = f => { const k = f.path.indexOf('/'); return k < 0 ? ROOT : f.path.slice(0, k); };
+const isFiltering = () => !!$('#lq').value.trim();
+function setFolder(name, open) {
+  const head = $$('#llist .lf').find(h => h.dataset.f === name), body = $$('#llist .lfbody').find(b => b.dataset.f === name);
+  if (!head || !body) return; body.hidden = !open; head.classList.toggle('open', open);
+  if (!isFiltering()) { open ? LOPEN.add(name) : LOPEN.delete(name); saveOpen(); }
+}
+function renderLessons() {
+  if (!S.inv) return;
+  const q = $('#lq').value.trim().toLowerCase(), all = $('#lAll').checked, filtering = !!q; L.items = []; let html = '', nFolders = 0, nLessons = 0, nWidgets = 0, nMatch = 0;
+  for (const [repo, d] of Object.entries(S.inv)) {
+    if (d.missing) { html += `<div class="lrepo">${esc(repo)}</div><p class="muted small" style="padding:8px 12px">Folder not found next to this repo.</p>`; continue; }
+    html += `<div class="lrepo">${esc(repo)}</div>`;
+    const groups = new Map();
+    for (const f of d.files) { const dir = folderOf(f); if (!groups.has(dir)) groups.set(dir, { lessons: [], widgets: [], other: [] }); groups.get(dir)[f.fate === 'widget' ? 'widgets' : f.fate === 'other' ? 'other' : 'lessons'].push(f); }
+    const ord = d.order || [], spans = d.spans || {}, rank = n => { const k = ord.indexOf(n); return k < 0 ? 1e6 : k; };   // rough chronological order, then A-Z
+    const names = [...groups.keys()].filter(n => n !== ROOT).sort((a, b) => rank(a) - rank(b) || a.localeCompare(b)); if (groups.has(ROOT) && all) names.push(ROOT);
+    for (const name of names) {
+      const g = groups.get(name), match = f => !q || (f.path + ' ' + (f.title || '')).toLowerCase().includes(q);
+      const shown = [...g.lessons, ...g.widgets, ...(all ? g.other : [])].filter(match);
+      if (name !== ROOT) { nFolders++; nLessons += g.lessons.length; nWidgets += g.widgets.length; }
+      if (filtering && !shown.length) continue;
+      nMatch += shown.length;
+      const open = filtering ? true : LOPEN.has(name), none = !g.lessons.length && !g.widgets.length;
+      const cnt = none ? 'no lessons yet' : `${g.lessons.length} lesson${g.lessons.length === 1 ? '' : 's'}${g.widgets.length ? ` · ${g.widgets.length} widget${g.widgets.length === 1 ? '' : 's'}` : ''}${filtering ? ` · ${shown.length} match` : ''}`;
+      html += `<div class="lf ${open ? 'open' : ''} ${none ? 'empty' : ''}" data-f="${esc(name)}"><span class="chev">▸</span><span class="lfname"><b>${esc(name)}</b>${spans[name] ? `<small>${esc(spans[name])}</small>` : ''}</span><span class="cnt">${cnt}</span></div><div class="lfbody" data-f="${esc(name)}" ${open ? '' : 'hidden'}>`;
+      for (const f of shown) {
+        const i = L.items.push({ repo, f, folder: name }) - 1, k = f.path.lastIndexOf('/'), wg = f.fate === 'widget';
+        html += `<div class="li ${f.fate === 'other' ? 'other' : ''} ${wg ? 'wg' : ''}" data-i="${i}" title="${esc(FATE_LABEL[f.fate])}"><span class="dot ${f.fate}"></span><span class="nm">${esc(f.path.slice(k + 1))}</span><span class="tt">${esc(f.title || '')}</span>${wg ? '<span class="wtag">widget</span>' : ''}</div>`;
+      }
+      if (!shown.length) html += `<div class="lempty">${q ? 'No matches.' : 'Nothing in this folder yet.'}</div>`;
+      html += '</div>';
+    }
+  }
+  $('#llist').innerHTML = html || '<p class="muted small" style="padding:12px">Nothing matches.</p>';
+  $('#lcount').textContent = filtering ? `${nMatch} file${nMatch === 1 ? '' : 's'} match` : `${nFolders} topic folders · ${nLessons} lessons · ${nWidgets} widgets · green dot = has an entry`;
+  L.sel = -1; $('#hang').hidden = true;
+  $$('#llist .li').forEach(el => el.onclick = () => selectLesson(+el.dataset.i));
+  $$('#llist .lf').forEach(h => h.onclick = () => setFolder(h.dataset.f, !h.classList.contains('open')));
+}
+const setAllFolders = open => $$('#llist .lf').forEach(h => setFolder(h.dataset.f, open));
+async function selectLesson(i) {
+  const it = L.items[i]; if (!it) return; L.sel = i; setFolder(it.folder, true);
+  $$('#llist .li').forEach(el => el.classList.toggle('sel', +el.dataset.i === i));
+  $(`#llist .li[data-i="${i}"]`)?.scrollIntoView({ block: 'nearest' });
+  const { repo, f } = it, e = f.entry && S.index.find(r => r.id === f.entry);
+  const head = `<h2 class="lvt">${esc(f.title || f.path.split('/').pop())}</h2><div class="lvmeta"><code>${esc(repo)}/${esc(f.path)}</code> · ${fmtSize(f.size)} · <span class="fate ${f.fate}">${FATE_LABEL[f.fate]}</span>${f.why ? `<div>${esc(f.why)}</div>` : ''}</div>`;
+  const hang = $('#hang'); hang.hidden = !e; if (e) { hang.dataset.entry = e.id; hang.title = 'Open the encyclopedia entry “' + e.title + '” for editing'; }
+  const body = t => { $('#lview').innerHTML = `<div class="lv">${head}${t}</div>`; $('#lview').scrollTop = 0; };
+  if (f.fate === 'other') return body('<p class="muted">Not an HTML page, so there is nothing to preview.</p>');
+  if (mode() !== 'local') return body('<p class="muted">Previewing source lessons needs the local server (python _build/serve.py).</p>');
+  body('<p class="muted">Loading…</p>');
+  try {
+    const r = await fetch('/api/source?repo=' + encodeURIComponent(repo) + '&path=' + encodeURIComponent(f.path)); if (!r.ok) throw new Error(r.status);
+    const doc = new DOMParser().parseFromString(await r.text(), 'text/html');
+    doc.querySelectorAll('script,style,noscript,template,nav,iframe,svg,head').forEach(n => n.remove());
+    const SEL = 'h1,h2,h3,h4,h5,p,li,blockquote,figcaption,dt,dd';
+    L.blocks = [...doc.body.querySelectorAll(SEL)].filter(n => !n.querySelector(SEL)).map(n => ({ tag: n.tagName.toLowerCase(), text: n.textContent.replace(/\s+/g, ' ').trim() })).filter(b => b.text);
+    if (!L.blocks.length) { const t = doc.body.textContent.replace(/\s+/g, ' ').trim(); L.blocks = t ? [{ tag: 'p', text: t.slice(0, 3000) }] : []; }
+    L.shown = L_STEP; drawBlocks(head, i);
+  } catch (err) { if (L.sel === i) body(`<p class="muted">Could not load this page: ${esc(err.message)}</p>`); }
+}
+function drawBlocks(head, i) {
+  if (L.sel !== i) return;
+  const bs = L.blocks, words = bs.reduce((n, b) => n + b.text.split(/\s+/).length, 0), left = bs.length - L.shown;
+  const cls = { li: 'blk li2', dt: 'blk', dd: 'blk', figcaption: 'blk' };
+  const tags = { h1: 'h3', h2: 'h3', h3: 'h3', h4: 'h4', h5: 'h5', blockquote: 'blockquote' };
+  const htmlBlocks = bs.slice(0, L.shown).map(b => { const t = tags[b.tag] || 'p'; return `<${t} class="${cls[b.tag] || 'blk'}">${esc(b.text)}</${t}>`; }).join('');
+  $('#lview').innerHTML = `<div class="lv">${head}<div class="lvmeta">${bs.length} text blocks · ${words} words${left > 0 ? ` · showing the first ${L.shown}` : ''}</div>${htmlBlocks || '<p class="muted">No readable text found on this page.</p>'}${left > 0 ? `<div class="more"><button id="lvMore">Show ${Math.min(L_STEP, left)} more</button><button id="lvAll">Show all (${left} left)</button></div>` : ''}</div>`;
+  $('#lvMore')?.addEventListener('click', () => { L.shown += L_STEP; const y = $('#lview').scrollTop; drawBlocks(head, i); $('#lview').scrollTop = y; });
+  $('#lvAll')?.addEventListener('click', () => { L.shown = bs.length; const y = $('#lview').scrollTop; drawBlocks(head, i); $('#lview').scrollTop = y; });
+}
+$('#hang').onclick = () => openEntry($('#hang').dataset.entry);
+$('#lq').oninput = renderLessons; $('#lAll').onchange = renderLessons;
+addEventListener('keydown', ev => {
+  const m = $('#main'); if (!m.classList.contains('lessons') || m.classList.contains('open') || !['ArrowDown', 'ArrowUp'].includes(ev.key)) return;
+  if (ev.target.closest && ev.target.closest('input,select,textarea,[contenteditable]')) return;
+  const vis =$$('#llist .li').filter(el => !el.closest('.lfbody').hidden).map(el => +el.dataset.i); if (!vis.length) return;
+  ev.preventDefault(); const at = vis.indexOf(L.sel), down = ev.key === 'ArrowDown';
+  selectLesson(at < 0 ? vis[down ? 0 : vis.length - 1] : vis[Math.max(0, Math.min(vis.length - 1, at + (down ? 1 : -1)))]);
+});
+$('#lExpand').onclick = () => setAllFolders(true); $('#lCollapse').onclick = () => setAllFolders(false);
+// ---- Apply and the Push screen. Apply marks an entry finished and puts it on the Ready list (_meta/ready.json). The Push
+// screen is the cart you review before anything is sent. PREVIEW ONLY: nothing here writes to the lessons or to GitHub yet.
+const CHG = {}, CART_SEL = new Set(), CART_SEEN = new Set(), CART_OPEN = new Set(); let CART_ITEMS = [];
+const isStale = (id, row) => !row || S.ready.items[id].body_hash !== row.body_hash;   // edited again after it was applied
+function renderPushCount() { $('#pushcount').textContent = Object.keys(S.ready.items).length; }
+async function saveReady() { await writeText('_meta/ready.json', JSON.stringify(S.ready, null, 1) + '\n', 'Update ready list'); renderPushCount(); }
+function applyControls(r) {
+  const rd = S.ready.items[r.id];
+  if (rd && rd.body_hash === r.body_hash) return `<span class="st reviewed" title="Applied ${esc(rd.applied_at.slice(0, 10))}. It is on your Push list.">applied ✓</span><button id="eUndo" title="Take this entry off the Push list. Your edits stay as they are.">Undo apply</button>`;
+  return `<button class="gold" id="eApply" title="Save, then mark this entry finished and ready to push. Nothing is sent anywhere; you review everything on the Push screen first.">${rd ? 'Re-apply' : 'Apply'}</button>`;
+}
+// what differs between an entry's current text and the lesson text it was extracted from (matched by paragraph number)
+async function entryChanges(row) {
+  const key = row.id + '|' + row.body_hash; if (CHG[key]) return CHG[key];
+  const cur = parseBody(splitFront((await readText(row.file)).text).body);
+  let orig = []; try { orig = parseBody(splitFront((await readText(row.file.replace(/^entries\//, '_original/'))).text).body); } catch (e) {}
+  const om = new Map(orig.map(b => [b.ordinal, b])), cm = new Map(cur.map(b => [b.ordinal, b]));
+  return CHG[key] = {
+    changed: cur.filter(b => om.has(b.ordinal) && om.get(b.ordinal).text.trim() !== b.text.trim()).map(b => ({ ord: b.ordinal, before: om.get(b.ordinal).text, after: b.text })),
+    added: cur.filter(b => !om.has(b.ordinal)).map(b => ({ ord: b.ordinal, after: b.text })),
+    removed: orig.filter(b => !cm.has(b.ordinal)).map(b => ({ ord: b.ordinal, before: b.text })) };
+}
+async function applyEntry() {
+  const c = S.cur; if (!c) return; const id = c.fm.id;
+  if (!(await saveEntry())) return;
+  const row = S.index.find(x => x.id === id); if (!row) return;
+  const ch = await entryChanges(row);
+  if (!ch.changed.length && !ch.added.length && !ch.removed.length) { toast('This entry has no text changes from its lesson yet, so there is nothing to push. Edit a paragraph first.', 8000); return; }
+  S.ready.items[id] = { applied_at: new Date().toISOString(), body_hash: row.body_hash, by: (S.settings.user && S.settings.user.name) || 'local' };
+  try { await saveReady(); } catch (e) { delete S.ready.items[id]; toast('Could not record the apply: ' + e.message, 7000); return; }
+  renderTable(); toast(`Applied: “${row.title}”. It is on your Push list (${Object.keys(S.ready.items).length}).`, 6000);
+  $('#eClose').click();   // applying closes out the editing task
+}
+async function unapply(id, quiet) {
+  delete S.ready.items[id]; CART_OPEN.delete(id); CART_SEL.delete(id); CART_SEEN.delete(id); await saveReady(); renderTable();
+  if (S.cur && S.cur.row.id === id) renderDrawer(); if (!quiet) toast('Taken off the Push list. Your edits are still saved in the entry.');
+}
+async function renderCart() {
+  const ids = Object.keys(S.ready.items).sort((a, b) => S.ready.items[a].applied_at.localeCompare(S.ready.items[b].applied_at));
+  $('#cartList').innerHTML = ids.length ? '<p class="muted">Loading…</p>' : ''; CART_ITEMS = [];
+  for (const id of ids) {
+    const row = S.index.find(x => x.id === id), ch = row ? await entryChanges(row).catch(() => ({ changed: [], added: [], removed: [] })) : null;
+    CART_ITEMS.push({ id, row, rd: S.ready.items[id], ch }); if (!CART_SEEN.has(id)) { CART_SEEN.add(id); CART_SEL.add(id); }
+  }
+  drawCart();
+}
+const cartCounts = x => x.ch ? x.ch.changed.length + x.ch.added.length + x.ch.removed.length : 0;
+const selectedItems = () => CART_ITEMS.filter(x => x.row && !isStale(x.id, x.row) && CART_SEL.has(x.id));
+function cartDiffHtml(c) {
+  const d = c.changed.map(p => `<div class="hpara"><div class="small muted">¶ ${p.ord} changed</div>${wordDiff(p.before, p.after) ?? `<del>${esc(p.before)}</del> <ins>${esc(p.after)}</ins>`}</div>`);
+  const a = c.added.map(p => `<div class="hpara"><span class="tag">¶ ${p.ord} added</span> <ins>${esc(p.after)}</ins></div>`);
+  const r = c.removed.map(p => `<div class="hpara"><span class="tag">¶ ${p.ord} removed</span> <del>${esc(p.before)}</del></div>`);
+  return [...d, ...a, ...r].join('') || '<p class="muted small">No text changes.</p>';
+}
+function drawCart() {
+  const box = $('#cartList');
+  box.innerHTML = !CART_ITEMS.length ? '<div class="cartempty"><b>Your cart is empty.</b><br>Finish an entry with <i>Apply</i> in the editor and it will appear here for review.</div>' : CART_ITEMS.map(x => {
+    const r = x.row, c = x.ch, stale = isStale(x.id, r), open = CART_OPEN.has(x.id);
+    if (!r) return `<div class="cartitem stale"><div class="cartrow"><div style="flex:1"><h4>${esc(x.id)}</h4><div class="small muted">This entry no longer exists.</div></div><div class="cartbtns"><button class="small crm" data-id="${esc(x.id)}">Remove</button></div></div></div>`;
+    return `<div class="cartitem ${stale ? 'stale' : ''}" data-id="${esc(x.id)}">
+      <div class="cartrow"><input type="checkbox" class="csel" ${CART_SEL.has(x.id) && !stale ? 'checked' : ''} ${stale ? 'disabled' : ''} title="${stale ? 'Edited since you applied it. Open the entry and apply it again.' : 'Include in this order'}">
+        <div style="flex:1;min-width:0"><h4>${esc(r.title)}</h4>
+          <div class="small muted">${esc(r.area)} · would change <code>${esc(r.sources[0].path)}</code></div>
+          <div class="ctags"><span class="tag">${c.changed.length} paragraph${c.changed.length === 1 ? '' : 's'} changed</span>${c.added.length ? `<span class="tag">${c.added.length} added</span>` : ''}${c.removed.length ? `<span class="tag">${c.removed.length} removed</span>` : ''}${stale ? '<span class="tag warn">edited since you applied it: re-apply before pushing</span>' : ''}</div>
+          <div class="small muted">Applied ${esc(x.rd.applied_at.slice(0, 10))}</div></div>
+        <div class="cartbtns"><button class="small cview" data-id="${esc(x.id)}">${open ? 'Hide changes' : 'View changes'}</button><button class="small copen" data-id="${esc(x.id)}">Open entry</button><button class="small crm" data-id="${esc(x.id)}">Remove</button></div></div>
+      <div class="cartdiff" ${open ? '' : 'hidden'}>${cartDiffHtml(c)}</div></div>`;
+  }).join('');
+  updateCartBar();
+}
+function updateCartBar() {
+  const sel = selectedItems(), p = sel.reduce((n, x) => n + cartCounts(x), 0);
+  $('#cartSum').innerHTML = CART_ITEMS.length ? `<b>${sel.length} of ${CART_ITEMS.length}</b> selected · ${sel.length} lesson${sel.length === 1 ? '' : 's'} · ${p} paragraph change${p === 1 ? '' : 's'}` : 'Nothing to push.';
+  $('#order1').disabled = $('#order2').disabled = !sel.length; $('#cartAll').disabled = $('#cartNone').disabled = !CART_ITEMS.length;
+}
+function showOrder(step) {   // explains what the step WOULD do; writes and sends nothing
+  const sel = selectedItems(); if (!sel.length) return; const p = sel.reduce((n, x) => n + cartCounts(x), 0);
+  const files = sel.map(x => `<li><code>${esc(x.row.sources[0].path)}</code>: ${cartCounts(x)} paragraph change${cartCounts(x) === 1 ? '' : 's'}</li>`).join('');
+  $('#pushTitle').textContent = step === 1 ? 'Step 1 · Write to lessons' : 'Step 2 · Send to GitHub';
+  $('#pushBody').innerHTML = step === 1
+    ? `<p>If this were connected, step 1 would write <b>${p} paragraph change${p === 1 ? '' : 's'}</b> into <b>${sel.length} lesson file${sel.length === 1 ? '' : 's'}</b> in your local <code>optima-history</code> folder and save them as one local commit. You could still undo that commit, and nothing would reach GitHub.</p><ul>${files}</ul>`
+    : `<p>If this were connected, step 2 would send that commit to <code>github.com/optimaondemand/optima-history</code>. It would send only if GitHub has not moved ahead since your last Refresh (Pull), and it would never force anything. If GitHub had moved ahead, it would stop and ask you to Refresh (Pull) first.</p><ul>${files}</ul>`;
+  $('#mPush').classList.add('open');
+}
+$('#btnPush').onclick = () => setView('cart');
+$('#order1').onclick = () => showOrder(1); $('#order2').onclick = () => showOrder(2);
+$('#cartAll').onclick = () => { CART_ITEMS.forEach(x => CART_SEL.add(x.id)); drawCart(); }; $('#cartNone').onclick = () => { CART_SEL.clear(); drawCart(); };
+$('#cartList').addEventListener('click', async e => {
+  const b = e.target.closest('button'); if (!b || !b.dataset.id) return; const id = b.dataset.id;
+  if (b.classList.contains('cview')) { CART_OPEN.has(id) ? CART_OPEN.delete(id) : CART_OPEN.add(id); drawCart(); }
+  else if (b.classList.contains('copen')) openEntry(id);
+  else if (b.classList.contains('crm')) { await unapply(id, true); toast('Taken out of the cart. Your edits are still saved in the entry.'); renderCart(); }
+});
+$('#cartList').addEventListener('change', e => { if (!e.target.classList.contains('csel')) return; const id = e.target.closest('.cartitem').dataset.id; e.target.checked ? CART_SEL.add(id) : CART_SEL.delete(id); updateCartBar(); });
+
+// Refresh (git pull): bring the local optima-history up to date with GitHub, re-scan it, and redraw the lists
+async function pullLibrary() {
+  if (mode() !== 'local') { toast('Refresh needs the local server (python _build/serve.py).', 5000); return; }
+  const b = $('#btnPull'), label = b.innerHTML; b.disabled = true; b.innerHTML = '<b>↻ Pulling…</b>';
+  try {
+    const r = await (await fetch('/api/pull', { method: 'POST', body: '{}' })).json();
+    if (!r.ok) { toast('Could not pull from GitHub: ' + r.message, 10000); return; }
+    const scan = await (await fetch('/api/inventory', { method: 'POST', body: '{}' })).json(); if (!scan.ok) throw new Error(scan.log || 'the re-scan failed');
+    const keep = L.items[L.sel] ? L.items[L.sel].f.path : null;
+    await loadInventory();
+    if (keep) { const i = L.items.findIndex(x => x.f.path === keep); if (i >= 0) selectLesson(i); }
+    const news = r.changed ? `Pulled ${r.commits} new commit${r.commits === 1 ? '' : 's'} from GitHub (${r.files} file${r.files === 1 ? '' : 's'} changed): ${r.subjects.slice(0, 2).join('; ')}${r.commits > 2 ? '; …' : ''}.` : 'Already up to date with GitHub.';
+    toast(news + (r.ahead ? ` You have ${r.ahead} local commit${r.ahead === 1 ? '' : 's'} not yet pushed.` : '') + (r.dirty ? ` ${r.dirty} uncommitted local change${r.dirty === 1 ? '' : 's'} left as they were.` : ''), r.changed ? 9000 : 6000);
+  } catch (e) { toast('Refresh failed: ' + e.message, 8000); }
+  finally { b.disabled = false; b.innerHTML = label; }
+}
+$('#btnPull').onclick = pullLibrary;
+$('#tq').oninput = renderTree; $('#tfate').onchange = renderTree;
+$('#tRefresh').onclick = async () => {
+  if (mode() !== 'local') { toast('Re-scan needs the local server (python _build/serve.py).'); return; }
+  try { const j = await (await fetch('/api/inventory', { method: 'POST', body: '{}' })).json(); if (!j.ok) throw new Error(j.log || 'failed'); await loadInventory(); toast('Re-scanned.'); } catch (e) { toast('Re-scan failed: ' + e.message, 5000); }
+};
+function closeModals() { $$('.modal').forEach(m => m.classList.remove('open')); }
+$('#btnQueue').onclick = () => { renderQueue(); $('#mQueue').classList.add('open'); };
+function areaList() { // topic areas = optima-history folders (from the inventory) plus any area that already has an entry
+  const a = new Set(S.index.map(r => r.area).filter(Boolean));
+  for (const d of Object.values(S.inv || {})) for (const f of d.files || []) { const i = f.path.indexOf('/'); if (i > 0) a.add(f.path.slice(0, i)); }
+  return [...a].sort();
+}
+$('#btnNew').onclick = () => { $('#nArea').innerHTML = areaList().map(a => `<option>${esc(a)}</option>`).join(''); $('#mNew').classList.add('open'); $('#nTitle').focus(); };
+async function saveQueue() { await writeText('_meta/queue.yml', '# Topic queue: things to write that have no entry yet.\nschema: 1\n' + jsyaml.dump({ items: S.queue.items }, { sortKeys: false, lineWidth: 1000 }), 'Update topic queue'); $('#qcount').textContent = S.queue.items.filter(i => i.status !== 'done').length || ''; }
+function newItemFromForm() {
+  const title = $('#nTitle').value.trim(); if (!title) { toast('Give the topic a title.'); return null; }
+  return { id: slug(title), title, category: $('#nCat').value, area: $('#nArea').value, texts: $('#nTexts').value.split(/[,\s]+/).filter(Boolean), topics: $('#nTopics').value.split(/[,\s]+/).filter(Boolean), notes: $('#nNotes').value.trim(), status: 'queued', created: new Date().toISOString().slice(0, 10) };
+}
+$('#nAddQueue').onclick = async () => { const it = newItemFromForm(); if (!it) return; S.queue.items.push(it); try { await saveQueue(); toast('Queued: ' + it.title); closeModals(); $('#nTitle').value = $('#nNotes').value = $('#nTexts').value = $('#nTopics').value = ''; } catch (e) { toast(e.message, 6000); } };
+$('#nStartNow').onclick = async () => { const it = newItemFromForm(); if (!it) return; S.queue.items.push(it); try { await startItem(it); } catch (e) { toast(e.message, 6000); } };
+async function startItem(it) {
+  const area = it.area || areaList()[0]; const id = `${area}-${it.id}`.slice(0, 80); const file = `entries/${area}/${id}.md`;
+  if (S.index.some(x => x.id === id)) { toast('An entry with that id already exists.'); return openEntry(id); }
+  const fm = { id, title: it.title, category: it.category, scope: 'general', status: 'draft', publish: false, rights: 'unchecked', schema: 1, area, course: '', course_code: '', grade: '', module: '', topics: it.topics, texts: it.texts, authors: [], period: '', standards_fl: [], standards_tx: [], standards_ccss: [], moves: [], genre: '', pairs_with: [], see_also: [], media: [], paragraphs: 1, words: 0, voice_flagged: 0, notes: it.notes || undefined, sources: [{ repo: 'authored', path: file, sha: '', lesson_title: it.title, url: '' }] };
+  if (!fm.notes) delete fm.notes;
+  const body = `<!-- block 1 role=content added -->\n(write the first paragraph here)\n`;
+  await writeText(file, '---\n' + jsyaml.dump(fm, { sortKeys: false, lineWidth: 1000 }) + '---\n' + body, `Start ${id}`);
+  it.status = 'started'; it.entry = id; await saveQueue(); await rebuild();
+  if (mode() === 'local') S.index = JSON.parse((await readText('index.json')).text); else { const row = { ...fm, file, visuals: [], proposals: 0, changed_since_extraction: false, _who: S.settings.user?.name }; S.index.push(row); try { await writeIndexRow(row, `Rebuild index for ${id}`); } catch (e) { toast('Draft created, but the shared list could not be updated: ' + e.message, 9000); } }
+  renderProgress(); renderTable(); closeModals(); toast('Draft created: ' + id); openEntry(id);
+}
+function renderQueue() {
+  const items = S.queue.items; $('#queueList').innerHTML = items.length ? items.map((it, i) => `<div class="sib" style="align-items:center"><div><b>${esc(it.title)}</b> <span class="tag">${it.category}</span> ${(it.texts || []).map(t => `<span class="tag">${t}</span>`).join('')}${(it.topics || []).map(t => `<span class="tag">${t}</span>`).join('')}<div class="small muted">${esc(it.notes || '')}</div></div>
+    <div class="row" style="flex-wrap:nowrap"><span class="st ${it.status === 'done' ? 'reviewed' : it.status === 'started' ? 'edited' : 'draft'}">${it.status}</span>${it.status === 'queued' ? `<button class="small" data-start="${i}">Start</button>` : ''}${it.entry ? `<button class="small" data-open="${it.entry}">Open</button>` : ''}${it.status !== 'done' ? `<button class="small" data-done="${i}">Done</button>` : ''}<button class="small" data-rm="${i}">✕</button></div></div>`).join('') : '<p class="muted">Queue is empty. Use “New topic” to add one, or run the standards audit to seed gaps.</p>';
+  $$('#queueList [data-start]').forEach(b => b.onclick = () => startItem(items[+b.dataset.start]).catch(e => toast(e.message, 6000)));
+  $$('#queueList [data-open]').forEach(b => b.onclick = () => { closeModals(); openEntry(b.dataset.open); });
+  $$('#queueList [data-done]').forEach(b => b.onclick = async () => { items[+b.dataset.done].status = 'done'; await saveQueue(); renderQueue(); });
+  $$('#queueList [data-rm]').forEach(b => b.onclick = async () => { if (confirm('Remove this item from the queue?')) { items.splice(+b.dataset.rm, 1); await saveQueue(); renderQueue(); } });
+}
+
+// ------------------------------------------------------------------ vocabularies
+$('#btnVocab').onclick = async () => { await loadVocabFile(); $('#mVocab').classList.add('open'); };
+async function loadVocabFile() { $('#vText').value = (await readText($('#vFile').value)).text; $('#vMsg').textContent = ''; }
+$('#vFile').onchange = loadVocabFile;
+$('#vSave').onclick = async () => { try { jsyaml.load($('#vText').value); } catch (e) { $('#vMsg').textContent = 'YAML error: ' + e.message; return; } try { await writeText($('#vFile').value, $('#vText').value, 'Update ' + $('#vFile').value); const rb = await rebuild(); $('#vMsg').textContent = 'Saved.' + (rb && rb.gate ? (rb.gate.pass ? ' Gate passes.' : ` Gate FAILED: ${rb.gate.vocabulary_error_count} vocabulary errors.`) : ''); await loadAll(); } catch (e) { $('#vMsg').textContent = e.message; } };
+
+// ------------------------------------------------------------------ csv + settings + sort
+$('#btnCsv').onclick = () => { const cols = ['id', 'title', 'course', 'grade', 'module', 'category', 'scope', 'status', 'paragraphs', 'words', 'voice_flagged', 'changed_since_extraction', 'topics', 'texts', 'standards_fl', 'standards_tx', 'standards_ccss', 'pairs_with']; const csv = [cols.join(',')].concat(filtered().map(r => cols.map(k => { let v = r[k]; if (Array.isArray(v)) v = v.join(';'); return '"' + String(v ?? '').replace(/"/g, '""') + '"'; }).join(','))).join('\n'); const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' })); a.download = 'encyclopedia-tracker.csv'; a.click(); };
+$$('#tbl th[data-k]').forEach(th => th.onclick = () => { const k = th.dataset.k; S.sort = { k, dir: S.sort.k === k ? -S.sort.dir : 1 }; renderTable(); });
+['#q', '#fStatus', '#fArea', '#fCourse', '#fCat', '#fText', '#fTopic', '#fFlag'].forEach(s => $(s).oninput = $(s).onchange = renderTable);
+$$('.modal').forEach(m => m.onclick = e => { if (e.target === m) closeModals(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModals(); if ((e.ctrlKey || e.metaKey) && e.key === 's' && S.cur) { e.preventDefault(); saveEntry(); } });
+
+// ------------------------------------------------------------------ github mode: sign-in, identity, history, activity
+function showSignin(msg) {
+  $('#main').hidden = true; $('#signin').hidden = false; const c = cfg();
+  $('#siRepoName').textContent = c.repo; $('#siOwner').textContent = c.repo.split('/')[0]; $('#siRepo').value = c.repo; $('#siBranch').value = c.branch; $('#siToken').value = '';
+  $('#siMsg').textContent = msg || ''; $('#who').hidden = true; $('#siToken').focus();
+}
+async function whoami() {
+  const r = await ghUser();
+  if (r.status === 401) throw new Error('GitHub did not accept that token.');
+  if (!r.ok) throw new Error('GitHub answered ' + r.status + ' when checking the token.');
+  const u = await r.json(); S.settings.user = { login: u.login, name: u.name || u.login }; saveSettings();
+  const probe = await gh(`contents/index.json?ref=${encodeURIComponent(cfg().branch)}`);
+  if (probe.status === 404) throw new Error(`The token works, but it cannot see ${cfg().repo}. Grant the token this repository, and make sure ${u.login} has write access to it.`);
+  if (!probe.ok) throw new Error('GitHub answered ' + probe.status + ' when reading the repository.');
+  $('#who').hidden = false; $('#who').innerHTML = `Signed in as <b>${esc(S.settings.user.name)}</b> <button class="ghost" id="btnOut">Sign out</button>`;
+  $('#btnOut').onclick = () => { delete S.settings.token; delete S.settings.user; saveSettings(); location.reload(); };
+}
+$('#siGo').onclick = async () => {
+  S.settings = { ...S.settings, token: $('#siToken').value.trim(), repo: $('#siRepo').value.trim() || PRESET.repo, branch: $('#siBranch').value.trim() || PRESET.branch };
+  if (!S.settings.token) { $('#siMsg').textContent = 'Paste a token first.'; return; }
+  $('#siMsg').textContent = 'Checking…'; saveSettings(); boot();
+};
+$('#siToken').onkeydown = e => { if (e.key === 'Enter') $('#siGo').onclick(); };
+// The list comes from index.json, which the repo's Action rebuilds after each push. Until it has, take statuses from the commit log.
+async function syncFromCommits() {
+  const [idx] = await commitsFor('index.json', 1, undefined, true); if (!idx) return;
+  const edits = await commitsFor('entries', 100, idx.when);
+  for (const c of edits.slice().reverse()) { const m = c.msg.match(/^Edit (\S+) \((\w+)\)/); if (!m) continue; const row = S.index.find(r => r.id === m[1]); if (!row) continue; row.status = m[2]; row._who = c.who; }
+  S.lag = edits.length; if (edits.length) { renderProgress(); renderTable(); }
+}
+function patchRow(fm, blocks) {
+  const row = S.index.find(x => x.id === fm.id); if (!row) return;
+  Object.assign(row, { title: fm.title, status: fm.status, publish: !!fm.publish, category: fm.category, scope: fm.scope, topics: fm.topics || [], texts: fm.texts || [], standards_fl: fm.standards_fl || [], standards_tx: fm.standards_tx || [], standards_ccss: fm.standards_ccss || [], pairs_with: fm.pairs_with || [], paragraphs: blocks.length, words: fm.words, voice_flagged: fm.voice_flagged, proposals: (fm.proposed_standards?.length || 0) + (fm.proposed_topics?.length || 0) + (fm.category_suggestion ? 1 : 0) + (fm.texts_suggestion?.length || 0), _who: S.settings.user?.name });
+  const origMap = Object.fromEntries((S.cur.orig || []).map(b => [b.ordinal, b.text.trim()]));
+  row.changed_since_extraction = blocks.some(b => origMap[b.ordinal] === undefined || origMap[b.ordinal] !== b.text.trim()) || blocks.length !== (S.cur.orig || blocks).length;
+}
+// ---- shared list upkeep. index.json is regenerated by the repo's Action when one is installed; the editor does not wait for it.
+// dumpPy writes the same shape as Python's json.dump(indent=0, ensure_ascii=False) so the two never fight over formatting.
+function dumpPy(v) {
+  if (Array.isArray(v)) return v.length ? '[\n' + v.map(dumpPy).join(',\n') + '\n]' : '[]';
+  if (v && typeof v === 'object') { const ks = Object.keys(v); return ks.length ? '{\n' + ks.map(k => JSON.stringify(k) + ': ' + dumpPy(v[k])).join(',\n') + '\n}' : '{}'; }
+  return JSON.stringify(v === undefined ? null : v);
+}
+const cleanRow = r => Object.fromEntries(Object.entries(r).filter(([k]) => !k.startsWith('_')));
+async function writeIndexRow(row, message) {
+  if (!row) return;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const { text, sha } = await readText('index.json'); const idx = JSON.parse(text);
+    const i = idx.findIndex(x => x.id === row.id); if (i >= 0) idx[i] = cleanRow(row); else idx.push(cleanRow(row));
+    try { await writeText('index.json', dumpPy(idx), message, sha); S.lag = 0; return; } catch (e) { if (!e.conflict) throw e; }
+  }
+  throw new Error('someone else updated the list three times in a row; your entry is saved and the list will catch up on the next save.');
+}
+async function checkSetup() {
+  const el = $('#setup'); if (!el) return;
+  const r = await gh(`contents/.github/workflows/index.yml?ref=${encodeURIComponent(cfg().branch)}`);
+  if (r.ok) { el.hidden = true; return; }
+  el.hidden = false; el.innerHTML = 'Optional: <a id="setupGo">install the index Action</a> so every push also regenerates the tracker and runs the full gate. The list already updates itself after each save.';
+  $('#setupGo').onclick = async () => {
+    el.textContent = 'Installing…';
+    try {
+      const { text } = await readText('_build/workflow-index.yml');
+      await writeText('.github/workflows/index.yml', text, 'Install index-rebuild Action');
+      el.textContent = 'Action installed. It runs on the next push.'; setTimeout(() => el.hidden = true, 6000);
+    } catch (e) {
+      const perm = /workflow|403|404|422/i.test(e.message);
+      el.innerHTML = perm ? 'GitHub refused: the token needs the <b>Workflows: Read and write</b> permission for this repository. Edit the token at github.com/settings/personal-access-tokens, then <a id="setupGo">try again</a>.' : 'Could not install: ' + esc(e.message) + ' <a id="setupGo">try again</a>';
+      $('#setupGo').onclick = () => checkSetup().then(() => $('#setupGo') && $('#setupGo').click());
+    }
+  };
+}
+async function loadHistory(file) {
+  const box = document.getElementById('histBox'); if (!box) return;
+  try {
+    const cs = await commitsFor(file, 30);
+    box.innerHTML = '<legend>History</legend>' + (cs.length ? cs.map(c => `<div class="hist"><span class="hwho">${esc(c.who)}</span> <span class="muted">${ago(c.when)}</span><a data-ver="${esc(c.sha)}" title="${esc(c.sha.slice(0, 7))}">view</a><div class="hmsg">${esc(c.msg)}</div></div>`).join('') : '<div class="muted small">No history for this file yet.</div>');
+    box.querySelectorAll('a[data-ver]').forEach(a => a.onclick = () => showVersion(file, a.dataset.ver, cs.find(c => c.sha === a.dataset.ver)).catch(e => toast('Could not load that version: ' + e.message, 6000)));
+  } catch (e) { box.innerHTML = `<legend>History</legend><div class="muted small">Could not load history: ${esc(e.message)}</div>`; }
+}
+async function showVersion(file, sha, meta) {
+  const { text } = await readText(file, sha); const { fm, body } = splitFront(text); const old = parseBody(body);
+  collectBlocks(); const cur = S.cur.blocks; const curMap = Object.fromEntries(cur.map(b => [b.ordinal, b.text]));
+  $('#hTitle').textContent = `Version saved by ${meta?.who || 'unknown'} · ${meta?.when ? meta.when.slice(0, 16).replace('T', ' ') : sha.slice(0, 7)}`;
+  $('#hMeta').textContent = `${meta?.msg || ''} · status ${fm.status}. Struck-through words are what that version had; highlighted words are what the editor shows now.`;
+  $('#hDiff').innerHTML = old.map(b => `<div class="hpara">${curMap[b.ordinal] === undefined ? `<del>${esc(b.text)}</del> <span class="muted small">(paragraph no longer present)</span>` : curMap[b.ordinal].trim() === b.text.trim() ? esc(b.text) : (wordDiff(b.text, curMap[b.ordinal]) ?? esc(b.text))}</div>`).join('')
+    + cur.filter(b => !old.some(o => o.ordinal === b.ordinal)).map(b => `<div class="hpara"><ins>${esc(b.text)}</ins> <span class="muted small">(added since)</span></div>`).join('');
+  $('#hRestore').onclick = () => { S.cur.fm = fm; S.cur.blocks = old; S.cur.reviewed = new Set(fm.reviewed_blocks || []); closeModals(); renderDrawer(); loadHistory(file); loadVisualImages(); toast('Loaded that version into the editor. Save to make it current.'); };
+  $('#mHist').classList.add('open');
+}
+async function loadVisualImages() { for (const img of $$('#reader img[data-vfile]')) { try { img.src = await readBlobUrl(img.dataset.vfile); img.style.display = ''; } catch (e) { img.style.display = 'none'; } } }
+$('#btnActivity').onclick = async () => {
+  $('#mAct').classList.add('open'); $('#actList').innerHTML = '<p class="muted small">Loading…</p>'; $('#actSummary').innerHTML = '';
+  try {
+    const cs = await commitsFor('entries', 100);
+    const by = {}; cs.forEach(c => by[c.who] = (by[c.who] || 0) + 1);
+    $('#actSummary').innerHTML = Object.entries(by).sort((a, b) => b[1] - a[1]).map(([w, n]) => `<span class="chip"><b>${esc(w)}</b> ${n}</span>`).join('');
+    $('#actList').innerHTML = cs.length ? cs.map(c => { const m = c.msg.match(/^(?:Edit|Start) (\S+)/); const row = m && S.index.find(r => r.id === m[1]); return `<div class="hist"><span class="hwho">${esc(c.who)}</span> <span class="muted">${ago(c.when)}</span> · ${row ? `<a data-open="${esc(row.id)}">${esc(row.title)}</a>` : esc(c.msg)}${row ? `<div class="hmsg">${esc(c.msg)}</div>` : ''}</div>`; }).join('') : '<p class="muted">No saves yet.</p>';
+    $$('#actList a[data-open]').forEach(a => a.onclick = () => { closeModals(); openEntry(a.dataset.open); });
+  } catch (e) { $('#actList').innerHTML = `<p class="muted">Could not load activity: ${esc(e.message)}</p>`; }
+};
+async function boot() {
+  if (mode() === 'github') {
+    $$('.gh-only').forEach(el => el.hidden = false);
+    if (!S.settings.token) return showSignin();
+    try { await whoami(); } catch (e) { return showSignin(e.message); }
+  }
+  $('#signin').hidden = true; $('#main').hidden = false;
+  try { await loadAll(); } catch (e) { $('#pnums').textContent = 'Could not load index.json: ' + e.message + (mode() === 'file' ? ' — open this page through _build/serve.py, not as a file.' : ''); return; }
+  loadInventory();
+  if (mode() === 'github') { syncFromCommits().catch(() => {}); checkSetup().catch(() => {}); }
+}
+boot();
+</script>
+</body>
+</html>
