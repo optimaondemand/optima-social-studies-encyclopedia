@@ -304,7 +304,7 @@ body.focusing{--hh:0px}
 <section id="signin" hidden>
   <div class="card">
     <h2>Sign in to edit</h2>
-    <p>The entries live in the private GitHub repository <b id="siRepoName"></b>. Every save becomes a commit there under your own GitHub name, so the history of each entry shows who changed what and when.</p>
+    <p>The entries live in the GitHub repository <b id="siRepoName"></b>. Every save becomes a commit there under your own GitHub name, so the history of each entry shows who changed what and when.</p>
     <ol class="steps">
       <li>Your GitHub account needs write access to that repository. If you do not have it yet, ask the repository owner to add you as a collaborator.</li>
       <li>Create a fine-grained token at <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>. Resource owner: <b id="siOwner"></b>. Repository access: <b>Only select repositories</b>, this one. Repository permissions: <b>Contents, Read and write</b>. Nothing else.</li>
@@ -312,7 +312,7 @@ body.focusing{--hh:0px}
     </ol>
     <div class="field"><label>Token</label><input id="siToken" type="password" autocomplete="off" placeholder="github_pat_…"></div>
     <details class="small"><summary class="muted">Repository and branch</summary><div class="row"><div class="field"><label>owner/repo</label><input id="siRepo"></div><div class="field" style="max-width:160px"><label>Branch</label><input id="siBranch"></div></div></details>
-    <div class="row" style="margin-top:12px"><button class="primary" id="siGo">Sign in</button><span class="small" id="siMsg"></span></div>
+    <div class="row" style="margin-top:12px"><button class="primary" id="siGo">Sign in</button><button id="siView" title="Look through the lessons and entries without signing in. Nothing can be saved.">Just look around (read-only)</button><span class="small" id="siMsg"></span></div>
   </div>
 </section>
 <main id="main" class="lessons">
@@ -444,6 +444,10 @@ const gh = (p, o = {}) => fetch(`${cfg().api}/repos/${cfg().repo}/${p}`, { ...o,
 const ghUser = () => fetch(`${cfg().api}/user`, { cache: 'no-store', headers: ghHeaders() });
 // Read a text file. In GitHub mode the blob sha comes back too; it is the lock a later write is checked against.
 async function readText(path, ref) {
+  if (mode() === 'github' && S.viewOnly) { // published page, no sign-in: read the files the site itself serves
+    const r = await fetch('../' + path, { cache: 'no-store' }); if (!r.ok) throw new Error(path + ' ' + r.status);
+    return { text: await r.text() };
+  }
   if (mode() === 'github') {
     if (!S.settings.token) throw new Error('not signed in');
     const q = `?ref=${encodeURIComponent(ref || cfg().branch)}`;
@@ -462,6 +466,7 @@ async function readBlobUrl(path) { // a binary file (visual PNG) as an object UR
 }
 // Write a text file. `sha` is the blob sha the caller read. If the file changed since, GitHub answers 409 and nothing is written.
 async function writeText(path, content, message, sha) {
+  if (S.viewOnly) throw new Error('This is the read-only view. Sign in to save.');
   if (mode() === 'file') throw new Error('Open through _build/serve.py (or the published editor) to save. file:// cannot write.');
   if (mode() === 'local') {
     const r = await fetch('/api/save', { method: 'POST', body: JSON.stringify({ path, content }) }); const j = await r.json();
@@ -987,10 +992,11 @@ async function selectLesson(i) {
   const hang = $('#hang'); hang.hidden = !e; if (e) { hang.dataset.entry = e.id; hang.title = 'Open the encyclopedia entry “' + e.title + '” for editing'; }
   const body = t => { $('#lview').innerHTML = `<div class="lv">${head}${t}</div>`; $('#lview').scrollTop = 0; };
   if (f.fate === 'other') return body('<p class="muted">Not an HTML page, so there is nothing to preview.</p>');
-  if (mode() !== 'local') return body('<p class="muted">Previewing source lessons needs the local server (python _build/serve.py).</p>');
+  if (mode() === 'file') return body('<p class="muted">Previewing source lessons needs the local server (python _build/serve.py) or the published editor.</p>');
   body('<p class="muted">Loading…</p>');
   try {
-    const r = await fetch('/api/source?repo=' + encodeURIComponent(repo) + '&path=' + encodeURIComponent(f.path)); if (!r.ok) throw new Error(r.status);
+    const r = await fetch(mode() === 'local' ? '/api/source?repo=' + encodeURIComponent(repo) + '&path=' + encodeURIComponent(f.path)
+      : 'https://optimaondemand.github.io/' + encPath(repo) + '/' + encPath(f.path)); if (!r.ok) throw new Error(r.status);
     const doc = new DOMParser().parseFromString(await r.text(), 'text/html');
     doc.querySelectorAll('script,style,noscript,template,nav,iframe,svg,head').forEach(n => n.remove());
     const SEL = 'h1,h2,h3,h4,h5,p,li,blockquote,figcaption,dt,dd';
@@ -1206,6 +1212,7 @@ $('#siGo').onclick = async () => {
   if (!S.settings.token) { $('#siMsg').textContent = 'Paste a token first.'; return; }
   $('#siMsg').textContent = 'Checking…'; saveSettings(); boot();
 };
+$('#siView').onclick = () => { try { sessionStorage.setItem('enc.view', '1'); } catch (e) {} S.viewOnly = true; boot(); };
 $('#siToken').onkeydown = e => { if (e.key === 'Enter') $('#siGo').onclick(); };
 // The list comes from index.json, which the repo's Action rebuilds after each push. Until it has, take statuses from the commit log.
 async function syncFromCommits() {
@@ -1286,9 +1293,12 @@ $('#btnActivity').onclick = async () => {
 };
 async function boot() {
   if (mode() === 'github') {
-    $$('.gh-only').forEach(el => el.hidden = false);
-    if (!S.settings.token) return showSignin();
-    try { await whoami(); } catch (e) { return showSignin(e.message); }
+    if (sessionStorage.getItem('enc.view') === '1' && !S.settings.token) S.viewOnly = true;
+    if (!S.viewOnly) {
+      $$('.gh-only').forEach(el => el.hidden = false);
+      if (!S.settings.token) return showSignin();
+      try { await whoami(); } catch (e) { return showSignin(e.message); }
+    } else { $('#who').hidden = false; $('#who').innerHTML = 'Read-only view <button class="ghost" id="btnOut">Sign in</button>'; $('#btnOut').onclick = () => { sessionStorage.removeItem('enc.view'); location.reload(); }; }
   }
   $('#signin').hidden = true; $('#main').hidden = false;
   try { await loadAll(); } catch (e) { $('#pnums').textContent = 'Could not load index.json: ' + e.message + (mode() === 'file' ? ' — open this page through _build/serve.py, not as a file.' : ''); return; }
