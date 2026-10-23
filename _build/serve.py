@@ -6,6 +6,8 @@ Serves the repo folder read-only over HTTP and accepts writes ONLY under entries
   POST /api/save   {path, content}            write one file (entry .md, taxonomy/topics/texts/queue .yml)
   POST /api/rebuild                            re-run build_index.py; returns gate.json
   POST /api/git    {message}                   git add entries/ visuals/ _meta/ index.json + commit (if the repo has git)
+  POST /api/gitstatus                          which entry/meta files differ from GitHub (uncommitted) and how many commits are unpushed
+  POST /api/push-entries {message}             commit the editor's files (entries/, visuals/, _meta/, index.json) and push them to THIS repo's GitHub; never forces
   POST /api/pull                               Refresh: `git pull --ff-only` in optima-history (the only thing here that touches it)
   GET  /api/source?repo=&path=                 read-only: one .html lesson page from optima-history (sibling folder)
 optima-history is the only repo this server reads lessons from, and it is never writable from here.
@@ -78,6 +80,35 @@ class H(http.server.SimpleHTTPRequestHandler):
                 ahead = int(git('rev-list', '--count', '@{u}..HEAD').stdout.strip() or 0)
                 dirty = len([l for l in git('status', '--porcelain').stdout.splitlines() if l])
                 return self._json(200, {'ok': True, 'changed': moved, 'commits': commits, 'files': files, 'subjects': subjects, 'ahead': ahead, 'dirty': dirty})
+            except subprocess.TimeoutExpired: return self._json(200, {'ok': False, 'message': 'GitHub did not respond in time. Check your connection and try again.'})
+            except Exception as e: return self._json(200, {'ok': False, 'message': str(e)[:300]})
+        if self.path in ('/api/gitstatus', '/api/push-entries'):
+            # Push (entries): send the editor's own files to this repo's GitHub. Never forces; stops if GitHub has moved ahead.
+            # GIT_TERMINAL_PROMPT=0 so git never waits on a password (it uses the stored GitHub login).
+            env = {**os.environ, 'GIT_TERMINAL_PROMPT': '0'}
+            def git(*a, t=120): return subprocess.run(['git', '-C', REPO, *a], capture_output=True, text=True, env=env, timeout=t)
+            paths = [p for p in ('entries', '_original', 'visuals', '_meta', 'index.json') if os.path.exists(os.path.join(REPO, p))]
+            try:
+                if not os.path.isdir(os.path.join(REPO, '.git')): return self._json(200, {'ok': False, 'message': 'This folder is not a git repository.'})
+                def changed(): return [l[3:].strip().strip('"') for l in git('status', '--porcelain', '--', *paths).stdout.splitlines() if l.strip()]
+                def ahead(): return int(git('rev-list', '--count', '@{u}..HEAD').stdout.strip() or 0)
+                if self.path == '/api/gitstatus': return self._json(200, {'ok': True, 'changed': changed(), 'ahead': ahead()})
+                msg = (body.get('message') or '').strip() or 'Edit entries in the editor'
+                files = changed()
+                if files:
+                    a = git('add', '-A', '--', *paths)
+                    if a.returncode != 0: return self._json(200, {'ok': False, 'message': 'Could not stage the files: ' + (a.stderr or a.stdout)[-300:]})
+                    c = git('commit', '-m', msg)
+                    if c.returncode != 0: return self._json(200, {'ok': False, 'message': 'Could not commit: ' + (c.stderr or c.stdout)[-300:]})
+                f = git('fetch', 'origin')
+                if f.returncode != 0: return self._json(200, {'ok': False, 'committed': bool(files), 'message': "Saved as a local commit, but couldn't reach GitHub. Check your internet connection and press Push again."})
+                if int(git('rev-list', '--count', 'HEAD..@{u}').stdout.strip() or 0):
+                    return self._json(200, {'ok': False, 'committed': bool(files), 'message': 'GitHub has newer commits than this computer (someone else saved there). Nothing was sent and nothing was overwritten. Ask Claude to merge them in.'})
+                n = ahead()
+                if not n: return self._json(200, {'ok': True, 'pushed': 0, 'files': 0, 'message': 'Nothing to send: GitHub already has everything.'})
+                r = git('push', 'origin', 'HEAD')
+                if r.returncode != 0: return self._json(200, {'ok': False, 'committed': bool(files), 'message': 'GitHub refused the push: ' + ' '.join((r.stderr or r.stdout).strip().splitlines()[-2:])[:300]})
+                return self._json(200, {'ok': True, 'pushed': n, 'files': len(files), 'commit': git('rev-parse', '--short', 'HEAD').stdout.strip()})
             except subprocess.TimeoutExpired: return self._json(200, {'ok': False, 'message': 'GitHub did not respond in time. Check your connection and try again.'})
             except Exception as e: return self._json(200, {'ok': False, 'message': str(e)[:300]})
         if self.path == '/api/git':

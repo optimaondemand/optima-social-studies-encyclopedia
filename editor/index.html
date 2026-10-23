@@ -295,7 +295,8 @@ body.focusing{--hh:0px}
   <button class="ghost" id="btnEntries">Entries</button>
   <button class="ghost" id="btnSource">File table</button>
   <button class="ghost pull" id="btnPull" title="Download any new commits from the optima-history repo on GitHub into your local copy, then reload the lessons list."><b>↻ Refresh</b> <span class="paren" title="Pull: GitHub's word for downloading new commits from the repository into your local copy. It only fast-forwards, so it can never overwrite your work; if it can't, it tells you why. (Fetch just checks for news without changing anything; push is the opposite direction and sends your changes up.)">(Pull)</span></button>
-  <button class="ghost push" id="btnPush" title="Review everything you have applied before anything is sent. (Preview only for now: nothing is written to the lessons or sent to GitHub.)"><b>⇪ Push</b> <span class="pill" id="pushcount">0</span></button>
+  <button class="ghost push" id="btnSend" title="Send your saved entries to the encyclopedia repository on GitHub."><b>⇪ Push to GitHub</b> <span class="pill" id="sendcount">0</span></button>
+  <button class="ghost" id="btnPush" title="Review entries you have applied to their lessons. (Preview only for now: nothing is written to the lessons.)"><b>Lesson changes</b> <span class="pill" id="pushcount">0</span></button>
   <button class="ghost" id="btnCsv">Export CSV</button>
   <button class="ghost gh-only" id="btnActivity" hidden>Activity</button>
   <span class="who gh-only small" id="who" hidden></span>
@@ -378,6 +379,11 @@ body.focusing{--hh:0px}
 <div id="fmtbar"><button data-f="bold" title="Bold (Ctrl+B)"><b>B</b></button><button data-f="italic" title="Italic (Ctrl+I)"><i>I</i></button><button data-f="removeFormat" title="Clear bold/italic">T<sub>x</sub></button></div>
 <button id="hang" hidden>✎ Edit this entry</button>
 <div id="toast"></div>
+
+<div class="modal" id="mSend"><div class="box">
+  <div class="row" style="justify-content:space-between"><h3 style="margin:0">Push to GitHub</h3><button onclick="closeModals()">Close</button></div>
+  <div id="sendBody"></div>
+</div></div>
 
 <div class="modal" id="mPush"><div class="box">
   <div class="row" style="justify-content:space-between"><h3 style="margin:0" id="pushTitle">Place order</h3><button onclick="closeModals()">Close</button></div>
@@ -1110,6 +1116,33 @@ function showOrder(step) {   // explains what the step WOULD do; writes and send
   $('#mPush').classList.add('open');
 }
 $('#btnPush').onclick = () => setView('cart');
+// Push to GitHub: commit the saved entries and send them to this repo on GitHub (local server only; the hosted editor saves straight to GitHub)
+async function gitStatus() { try { return await (await fetch('/api/gitstatus', { method: 'POST', body: '{}' })).json(); } catch (e) { return { ok: false }; } }
+async function refreshSendCount() { if (mode() !== 'local') { $('#sendcount').textContent = ''; return; } const g = await gitStatus(); $('#sendcount').textContent = g.ok ? (g.changed.length + g.ahead) || 0 : '?'; }
+$('#btnSend').onclick = async () => {
+  if (mode() === 'github') { $('#sendBody').innerHTML = '<p>You are on the published editor. Every save here is already sent to GitHub as its own commit, so there is nothing to push.</p>'; $('#mSend').classList.add('open'); return; }
+  if (mode() !== 'local') { toast('Push needs the local server (python _build/serve.py).', 5000); return; }
+  const g = await gitStatus(); if (!g.ok) { toast('Could not check GitHub status.', 5000); return; }
+  const n = g.changed.length, a = g.ahead;
+  $('#sendBody').innerHTML = (n || a)
+    ? `<p>${n ? `<b>${n} file${n === 1 ? '' : 's'}</b> changed since your last push.` : ''} ${a ? `${a} commit${a === 1 ? '' : 's'} already saved on this computer, not yet on GitHub.` : ''}</p>
+       <label class="small muted">Describe what you changed (optional)</label><input id="sendMsg" style="width:100%" placeholder="e.g. Edit Alamo entry">
+       <p class="muted small">Sends to <code>github.com/optimaondemand/optima-social-studies-encyclopedia</code>. It never forces anything and stops if someone else has saved there first.</p>
+       <div class="row"><button class="gold" id="sendGo">Push to GitHub</button></div><div id="sendOut" class="small"></div>`
+    : '<p>Nothing to send: GitHub already has everything you have saved.</p>';
+  $('#mSend').classList.add('open');
+  const go = $('#sendGo'); if (go) go.onclick = async () => {
+    go.disabled = true; go.textContent = 'Pushing…';
+    try {
+      const r = await (await fetch('/api/push-entries', { method: 'POST', body: JSON.stringify({ message: $('#sendMsg').value.trim() }) })).json();
+      if (r.ok) { $('#sendOut').innerHTML = r.pushed ? `<b>Sent.</b> ${r.files} file${r.files === 1 ? '' : 's'} pushed as commit <code>${esc(r.commit)}</code>.` : esc(r.message); go.style.display = 'none'; }
+      else { $('#sendOut').innerHTML = '<b>Not sent.</b> ' + esc(r.message); go.disabled = false; go.textContent = 'Try again'; }
+    } catch (e) { $('#sendOut').textContent = 'Push failed: ' + e.message; go.disabled = false; go.textContent = 'Try again'; }
+    refreshSendCount();
+  };
+};
+refreshSendCount(); setInterval(refreshSendCount, 60000);
+
 $('#order1').onclick = () => showOrder(1); $('#order2').onclick = () => showOrder(2);
 $('#cartAll').onclick = () => { CART_ITEMS.forEach(x => CART_SEL.add(x.id)); drawCart(); }; $('#cartNone').onclick = () => { CART_SEL.clear(); drawCart(); };
 $('#cartList').addEventListener('click', async e => {
