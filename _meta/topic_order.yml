@@ -22,17 +22,34 @@ order:
   # --- medieval and early modern
   - {folder: early-middle-ages,              span: 476 to 1000}
   - {folder: high-middle-ages,               span: 1000 to 1300}
+  - {folder: pre-columbian-america,          span: before European contact}
+  - {folder: renaissance,                    span: core: fall of Constantinople (1453) to Luther (1517)}
   - {folder: age-of-exploration,             span: 1400s to 1700s}
+  - {folder: triangle-trade-slavery,         span: Portuguese involvement (1441) to the British Navy's suppression of the trade}
+  - {folder: reformation-confessional-europe, span: Luther's Ninety-Five Theses (1517) to the Peace of Westphalia (1648)}
   # --- colonial North America through the world wars
+  - {folder: new-spain-hapsburg-bourbon,     span: viceroyalty (1535) to Mexican independence (1821)}
   - {folder: american-colonial-period,       span: Jamestown to the French and Indian War}
-  - {folder: spanish-republic-texas,         span: presidios and missions to annexation (1845)}
+  - {folder: first-contact-indian-wars,      span: first contact, trade, treaties, wars, and conquests}
+  - {folder: enlightenment,                 span: Descartes (1637) to the Reign of Terror (1793-1794)}
+  - {folder: great-awakenings,               span: 1730s-1740s revivals and the Second Great Awakening}
+  - {folder: spanish-republic-texas,        span: presidios and missions to annexation (1845)}
   - {folder: american-revolution-founding,   span: 1763 to Washington's inauguration (1789)}
   - {folder: industrial-revolution,          span: c. 1760s onward, global}
   - {folder: american-early-republic,        span: 1789 to the War of 1812}
+  - {folder: mexican-independence-caudillismo, span: 1810 to 1854}
   - {folder: jacksonian-westward-expansion,  span: after 1815 to the Mexican-American War}
-  - {folder: american-texas,                 span: statehood (1845) forward}
+  - {folder: antebellum-south,               span: the American Republic to the Civil War}
+  - {folder: texas-annexation-reconstruction, span: annexation (1845) through 1876}
   - {folder: american-west,                  span: 1804 to c. 1890}
   - {folder: american-civil-war,             span: sectionalism to the end of Reconstruction (1877)}
+  - {folder: mexico-liberal-revolution-porfiriato, span: 1854 to 1910}
   - {folder: gilded-progressive,             span: 1877 to U.S. entry into World War I}
+  - {folder: texas-1876-1941,                span: Constitution of 1876 to World War II (1941)}
+  - {folder: world-war-i,                    span: July Crisis (1914) to the Treaty of Versailles}
   - {folder: roaring-20s-great-depression,   span: World War I entry to World War II entry}
+  - {folder: mexican-revolutionary-consolidation, span: 1910 to 1940}
   - {folder: world-war-ii,                   span: through 1945}
+  - {folder: cold-war,                       span: 1945 to 1991}
+  - {folder: civil-rights-counterculture,    span: 1950s to 1970s}
+  - {folder: texas-wwii-postwar,             span: World War II to the present}

@@ -6,6 +6,40 @@ clean break and names the old course repos) was deliberately NOT published and s
 encyclopedia draws **only** on the `optima-history` lesson library (a clean break; see below). A demo for the author of the ELA
 editor is pending.
 
+## Progress log: 2026-10-23: Texas entries re-pointed at the rewritten lessons (read this first)
+
+**Why:** the 48 Fall Texas lessons in `optima-history` were deleted on 2026-10-07 (commit `166561c`) and rewritten from scratch
+(36 Fall lessons, pushed through `d5276bb`). The 36 Texas entries still described the deleted lessons: their text, `sources:`
+paths and shas pointed at files that no longer exist. Nothing in the lessons was touched; only this repo changed.
+
+**What was done (local, uncommitted, not pushed):**
+- `_meta/lesson_map.json`: the 36 old `txhist7` keys replaced with the 36 current lesson files. The week/lesson `position` for
+  each is INFERRED from lesson titles and the course map's week titles (Weeks 5-9 were confirmed against an earlier note;
+  Weeks 1-4 and 10-18 were not checked against Canvas). It is metadata only; correct it if any pair is swapped.
+- Ran `python _build/harvest.py txhist7` on a throwaway copy, verified, then copied only the Texas entries and `_original/` files
+  over. World History entries, tags and edits were not touched. Old Texas entries, originals and manifest lines were removed
+  (still in git history); `_meta/manifest.jsonl` and `_meta/report.json` were merged, not overwritten.
+- Rebuilt `index.json`, `tracker.csv`, `gate.json` and `source_inventory.json`. Gate passes. Entries are filed under four
+  areas: `age-of-exploration` (7), `new-spain-hapsburg-bourbon` (2), `spanish-republic-texas` (24),
+  `mexican-independence-caudillismo` (3).
+- `harvest.py` changes, needed because the rewritten lessons are built differently: (1) the entry title is now the page's own
+  `<title>` when it is a plain string (the old "Topic" heuristic picked up the topic-area banner, e.g. "Age of Exploration");
+  (2) skips entries inside the Glossary and Foreign Language Vocabulary boxes (div ids starting `g-` or `f-`), and the
+  "What to carry forward" and "Remember this question" closing callouts; (3) the Foreign Language Vocabulary box no longer
+  renames the section for the paragraphs after it.
+
+**Counts now:** Texas 36 entries, 695 paragraphs, 38,269 words (smallest entry 905 words), 49 voice-flagged. World History
+unchanged: 36 entries, 446 paragraphs. Total 72 entries, 1,141 paragraphs.
+
+**Lost / not redone:** the old Texas entries' seeded categories (judged one by one) were dropped with them; all 36 new Texas
+entries sit at the default `historic-context` and `_meta/_categories.json` has no rows for them. Topics, texts and standards
+fields were empty on the old entries, so nothing else was lost. Entry-level goals in browser localStorage are keyed by id and
+are gone for Texas.
+
+**Caution:** the `harvest.py` edits above were tested only on Texas. A fresh World History harvest would use the new title and
+skip rules and might not reproduce the frozen World History originals; check that before ever re-running it, and it still
+wipes tags and edits.
+
 ## Progress log: 2026-09-30 (end of day) — read this first
 
 **Published and public.** The repo `optimaondemand/optima-social-studies-encyclopedia` was made **public** (the user: everything
@@ -174,8 +208,8 @@ a separate extracted copy and are never written back; the editor never pushes.
 ## Current counts
 
 - World History: 36 entries, 446 paragraphs harvested, 31 voice-flagged
-- Texas History: 36 entries, 201 paragraphs harvested, 10 voice-flagged
-- Total: 72 entries, 647 paragraphs (the drop from 668 is the sequence-pointer sentences removed from the lessons). Categories: historic-context 20, biography 14, primary-source 12,
+- Texas History: 36 entries, 695 paragraphs harvested, 49 voice-flagged (re-harvested 2026-10-23 from the rewritten lessons)
+- Total: 72 entries, 1,141 paragraphs as of 2026-10-23 (647 before the Texas re-harvest; the drop from 668 to 647 is the sequence-pointer sentences removed from the lessons). Categories: historic-context 20, biography 14, primary-source 12,
   civic-concept 9, historical-concept 8, geography 8, economics-concept 1 (real judgment-based categorization, not
   placeholder; borderline calls are logged with reasoning in `_meta/_categories.json`).
 

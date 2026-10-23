@@ -1,15 +1,19 @@
 {
  "note": "Course-fit metadata per lesson in optima-history (course slug and position in that course). Used by harvest.py; the lesson files themselves carry no course or sequence in their names.",
  "lessons": {
-  "age-of-exploration/coronado-and-the-llano-estacado.html": {
-   "course": "txhist7",
-   "position": "quarter-1/week-04/lesson-1.html"
-  },
-  "age-of-exploration/eight-years-walking.html": {
+  "age-of-exploration/cabeza-de-vaca-walks-across-texas.html": {
    "course": "txhist7",
    "position": "quarter-1/week-03/lesson-2.html"
   },
-  "age-of-exploration/moscoso-the-caddo-and-four-different-texases.html": {
+  "age-of-exploration/coronado-and-the-cities-of-gold.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-04/lesson-1.html"
+  },
+  "age-of-exploration/cortes-takes-tenochtitlan.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-02/lesson-1.html"
+  },
+  "age-of-exploration/moscoso-meets-the-caddo.html": {
    "course": "txhist7",
    "position": "quarter-1/week-04/lesson-2.html"
   },
@@ -17,21 +21,13 @@
    "course": "txhist7",
    "position": "quarter-1/week-03/lesson-1.html"
   },
-  "age-of-exploration/the-fall-of-tenochtitlan.html": {
-   "course": "txhist7",
-   "position": "quarter-1/week-02/lesson-1.html"
-  },
-  "age-of-exploration/the-question-every-empire-faced.html": {
+  "age-of-exploration/three-european-powers-come-to-america.html": {
    "course": "txhist7",
    "position": "quarter-1/week-01/lesson-1.html"
   },
-  "age-of-exploration/three-models-side-by-side.html": {
+  "age-of-exploration/three-models-of-colonization.html": {
    "course": "txhist7",
    "position": "quarter-1/week-01/lesson-2.html"
-  },
-  "age-of-exploration/why-it-worked-and-what-1519-found-in-texas.html": {
-   "course": "txhist7",
-   "position": "quarter-1/week-02/lesson-2.html"
   },
   "ancient-anatolia/the-hittites-anatolian-cities-ironworking-and-ch.html": {
    "course": "wh6",
@@ -149,6 +145,26 @@
    "course": "wh6",
    "position": "week-16/lesson-1.html"
   },
+  "mexican-independence-caudillismo/napoleon-and-mexico.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-08/lesson-2.html"
+  },
+  "mexican-independence-caudillismo/the-mexican-constitution-fails-iturbide-becomes-emperor.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-10/lesson-2.html"
+  },
+  "mexican-independence-caudillismo/the-mexican-republic-collapses.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-13/lesson-2.html"
+  },
+  "new-spain-hapsburg-bourbon/the-bourbon-reforms.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-08/lesson-1.html"
+  },
+  "new-spain-hapsburg-bourbon/the-success-of-the-spanish-model.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-02/lesson-2.html"
+  },
   "persian-near-east/babylon-falls-and-a-cylinder-s-real-message.html": {
    "course": "wh6",
    "position": "week-17/lesson-2.html"
@@ -177,117 +193,101 @@
    "course": "wh6",
    "position": "week-07/lesson-2.html"
   },
-  "spanish-republic-texas/a-constitution-falls.html": {
-   "course": "txhist7",
-   "position": "quarter-2/week-10/lesson-2.html"
-  },
-  "spanish-republic-texas/a-decade-of-patience-ends-in-a-prison-cell.html": {
-   "course": "txhist7",
-   "position": "quarter-2/week-13/lesson-1.html"
-  },
-  "spanish-republic-texas/a-republic-running-out.html": {
-   "course": "txhist7",
-   "position": "quarter-2/week-18/lesson-1.html"
-  },
-  "spanish-republic-texas/building-a-government.html": {
-   "course": "txhist7",
-   "position": "quarter-2/week-16/lesson-1.html"
-  },
-  "spanish-republic-texas/coleto-creek-and-the-rifle.html": {
-   "course": "txhist7",
-   "position": "quarter-2/week-15/lesson-1.html"
-  },
-  "spanish-republic-texas/counting-the-colony.html": {
-   "course": "txhist7",
-   "position": "quarter-1/week-06/lesson-2.html"
-  },
-  "spanish-republic-texas/gonzales-to-bexar.html": {
-   "course": "txhist7",
-   "position": "quarter-2/week-14/lesson-1.html"
-  },
-  "spanish-republic-texas/governing-themselves.html": {
+  "spanish-republic-texas/an-american-colony-in-mexico-self-governance-in-san-felipe.html": {
    "course": "txhist7",
    "position": "quarter-2/week-11/lesson-2.html"
   },
-  "spanish-republic-texas/la-salle-s-mistake.html": {
+  "spanish-republic-texas/austins-colony-and-the-old-three-hundred.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-11/lesson-1.html"
+  },
+  "spanish-republic-texas/austins-imprisonment-in-mexico-city.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-13/lesson-1.html"
+  },
+  "spanish-republic-texas/battles-in-the-field-goliad-and-coleto-creek.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-15/lesson-1.html"
+  },
+  "spanish-republic-texas/comanche-and-spanish-collide-at-san-saba.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-07/lesson-2.html"
+  },
+  "spanish-republic-texas/come-and-take-it-gonzales-to-bexar.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-14/lesson-1.html"
+  },
+  "spanish-republic-texas/empresarios-americans-recruited-to-settle-texas.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-09/lesson-2.html"
+  },
+  "spanish-republic-texas/independent-republic-or-28th-state.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-18/lesson-1.html"
+  },
+  "spanish-republic-texas/la-salles-fateful-trip-to-texas.html": {
    "course": "txhist7",
    "position": "quarter-1/week-05/lesson-1.html"
   },
-  "spanish-republic-texas/lamar-s-war.html": {
+  "spanish-republic-texas/lamars-war.html": {
    "course": "txhist7",
    "position": "quarter-2/week-17/lesson-1.html"
   },
-  "spanish-republic-texas/mexico-s-northern-problem.html": {
+  "spanish-republic-texas/mexico-inherits-the-spanish-claim-to-texas.html": {
    "course": "txhist7",
    "position": "quarter-1/week-09/lesson-1.html"
+  },
+  "spanish-republic-texas/mexicos-1824-constitution.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-12/lesson-1.html"
   },
   "spanish-republic-texas/mission-presidio-pueblo.html": {
    "course": "txhist7",
    "position": "quarter-1/week-06/lesson-1.html"
   },
-  "spanish-republic-texas/money-land-and-a-capital.html": {
+  "spanish-republic-texas/mr-austin-goes-to-mexico-city.html": {
    "course": "txhist7",
-   "position": "quarter-2/week-16/lesson-2.html"
+   "position": "quarter-2/week-10/lesson-1.html"
   },
-  "spanish-republic-texas/moses-and-stephen-austin.html": {
-   "course": "txhist7",
-   "position": "quarter-1/week-09/lesson-2.html"
-  },
-  "spanish-republic-texas/napoleon-s-shock-and-mexico-s-war.html": {
-   "course": "txhist7",
-   "position": "quarter-1/week-08/lesson-2.html"
-  },
-  "spanish-republic-texas/nine-years-of-independence-end-in-a-joint-resolu.html": {
-   "course": "txhist7",
-   "position": "quarter-2/week-18/lesson-2.html"
-  },
-  "spanish-republic-texas/san-jacinto.html": {
-   "course": "txhist7",
-   "position": "quarter-2/week-15/lesson-2.html"
-  },
-  "spanish-republic-texas/san-saba-and-the-limit-of-empire.html": {
-   "course": "txhist7",
-   "position": "quarter-1/week-07/lesson-2.html"
-  },
-  "spanish-republic-texas/spain-reacts.html": {
-   "course": "txhist7",
-   "position": "quarter-1/week-05/lesson-2.html"
-  },
-  "spanish-republic-texas/the-alamo.html": {
+  "spanish-republic-texas/remember-the-alamo.html": {
    "course": "txhist7",
    "position": "quarter-2/week-14/lesson-2.html"
   },
-  "spanish-republic-texas/the-bourbon-reforms.html": {
+  "spanish-republic-texas/sam-houston-and-the-battle-of-san-jacinto.html": {
    "course": "txhist7",
-   "position": "quarter-1/week-08/lesson-1.html"
+   "position": "quarter-2/week-15/lesson-2.html"
+  },
+  "spanish-republic-texas/samuel-colts-revolver-and-the-texas-rangers.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-17/lesson-2.html"
+  },
+  "spanish-republic-texas/spain-reacts-to-the-french-in-texas.html": {
+   "course": "txhist7",
+   "position": "quarter-1/week-05/lesson-2.html"
+  },
+  "spanish-republic-texas/tension-between-texas-and-mexico-city.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-12/lesson-2.html"
+  },
+  "spanish-republic-texas/texas-joins-the-united-states-1845.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-18/lesson-2.html"
+  },
+  "spanish-republic-texas/texas-rich-in-land-poor-in-money.html": {
+   "course": "txhist7",
+   "position": "quarter-2/week-16/lesson-2.html"
   },
   "spanish-republic-texas/the-comanche-come-south.html": {
    "course": "txhist7",
    "position": "quarter-1/week-07/lesson-1.html"
   },
-  "spanish-republic-texas/the-federation-comes-apart.html": {
+  "spanish-republic-texas/the-constitution-of-the-republic-of-texas.html": {
    "course": "txhist7",
-   "position": "quarter-2/week-13/lesson-2.html"
+   "position": "quarter-2/week-16/lesson-1.html"
   },
-  "spanish-republic-texas/the-long-ride-south.html": {
+  "spanish-republic-texas/three-towns-after-three-centuries.html": {
    "course": "txhist7",
-   "position": "quarter-2/week-10/lesson-1.html"
-  },
-  "spanish-republic-texas/the-old-three-hundred.html": {
-   "course": "txhist7",
-   "position": "quarter-2/week-11/lesson-1.html"
-  },
-  "spanish-republic-texas/the-screws-tighten.html": {
-   "course": "txhist7",
-   "position": "quarter-2/week-12/lesson-2.html"
-  },
-  "spanish-republic-texas/walker-s-creek-and-the-revolver.html": {
-   "course": "txhist7",
-   "position": "quarter-2/week-17/lesson-2.html"
-  },
-  "spanish-republic-texas/what-1824-promised.html": {
-   "course": "txhist7",
-   "position": "quarter-2/week-12/lesson-1.html"
+   "position": "quarter-1/week-06/lesson-2.html"
   }
  }
 }

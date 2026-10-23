@@ -43,7 +43,7 @@ TOOL_WORDS = re.compile(r"\b(Reading Journal|Journal|Organizer|your own copy|own
 VOICE = re.compile(r"\b(you|your|yours|yourself|you'll|you're|you've|we|our|ours|us|let's|we'll|we're|I will be able|I can)\b", re.I)
 DEF_PATTERN = re.compile(r"\b(is|are|was|were|means|refers to|is called|are called|known as|describes|defines?)\b", re.I)
 TEACHER_NOTE = re.compile(r'\[Teacher:')
-SKIP_SECTION = re.compile(r"\bAI\b|AI-awareness|WORTH KNOWING|TRY THIS|\bJOURNAL\b|WORD WORK|\bRISKY\b|\bCAUTION\b|WHAT YOU.?LL DO NEXT|WRAP-?UP|^MATERIALS|^OBJECTIVES|BY THE END|CHECK-?IN|WARM-?UP|COMPREHENSION CHECK|NOW YOU|YOUR TURN|^REFLECT|EXIT TICKET|SELF-?CHECK|Reading Journal task|Today.?s Focus|^Objectives$|^Materials$|WHAT.?S NEXT|NEXT THIS WEEK|CARRY THIS FORWARD|KEEP THIS IN MIND|LOOKING AHEAD|COMING UP|^CLOSING|SEND-?OFF|WHAT YOU NEED|YOU WILL NEED|BEFORE YOU (START|BEGIN|GO)|HOW TO SUBMIT|SUBMIT|TURN IT IN|NOW READ|^READING$|THE READING|READ NOW", re.I)
+SKIP_SECTION = re.compile(r"\bAI\b|AI-awareness|WORTH KNOWING|TRY THIS|\bJOURNAL\b|WORD WORK|\bRISKY\b|\bCAUTION\b|WHAT YOU.?LL DO NEXT|WRAP-?UP|^MATERIALS|^OBJECTIVES|BY THE END|CHECK-?IN|WARM-?UP|COMPREHENSION CHECK|NOW YOU|YOUR TURN|^REFLECT|EXIT TICKET|SELF-?CHECK|Reading Journal task|Today.?s Focus|^Objectives$|^Materials$|WHAT.?S NEXT|NEXT THIS WEEK|CARRY THIS FORWARD|WHAT TO CARRY FORWARD|REMEMBER THIS QUESTION|GLOSSARY OF SUBJECT VOCABULARY|KEEP THIS IN MIND|LOOKING AHEAD|COMING UP|^CLOSING|SEND-?OFF|WHAT YOU NEED|YOU WILL NEED|BEFORE YOU (START|BEGIN|GO)|HOW TO SUBMIT|SUBMIT|TURN IT IN|NOW READ|^READING$|THE READING|READ NOW", re.I)
 STOPCAPS = {'The','A','An','This','That','These','Those','It','You','Your','We','Our','In','On','At','For','As','If','When','But','And','Or','So','Then','Now','Here','There','What','Why','How','Who','Which','One','Two','Three','Some','Many','Each','Every','No','Not','Yes','Read','Write','Notice','Part','Lesson','Week','Module','Quarter'}
 
 def slugify(s, maxlen=70):
@@ -234,7 +234,7 @@ def harvest_page(repo, relpath, html):
         plain = re.sub(r'\*\*|\*', '', text)
         if ((fs and fs >= 19) or tag in ('h1','h2','h3','h4')) and words(plain) < 14:
             section = clean_label(plain); section_titles.append(section)
-        if fs is not None and fs <= 13 and words(plain) < 16 and re.search(r'[A-Z]{3}', plain):
+        if fs is not None and fs <= 13 and words(plain) < 16 and re.search(r'[A-Z]{3}', plain) and not re.search(r'FOREIGN LANGUAGE VOCABULARY', plain):  # that box sits mid-body; it must not rename the section
             section = clean_label(plain)
         if fs and fs >= 20 and 2 <= words(plain) < 14 and not re.search(r'Optima|ENGLISH|GRADE|Quarter|Lesson \d|Language Arts|Student Lesson|Education Experience|^\s*(?:World|Texas) History\s*$', plain, re.I):
             title_cands.append((0 if fs >= 21 else 2, plain))
@@ -247,6 +247,7 @@ def harvest_page(repo, relpath, html):
             verdict, reason, flags = 'skip', 'inside-visual', []
         else:
             verdict, reason, flags = classify(text, tag, fs, cls, details_depth>0, bq_depth>0, section)
+            if verdict == 'harvest' and re.match(r'^[gf]-', el.get('id') or ''): verdict, reason, flags = 'skip', 'glossary-entry', []   # vocabulary box entries, not lesson prose
             if visual_node is not None and verdict == 'harvest': flags.append('in_visual')
         rec = {'ordinal': ordinal, 'verdict': verdict, 'reason': reason, 'flags': flags, 'tag': tag, 'fs': fs, 'cls': cls, 'section': section, 'words': words(plain), 'text': text}
         manifest.append(rec)
@@ -365,6 +366,11 @@ def main(repos=None):
                 if not res['blocks']:
                     c['pages_no_content'] += 1; continue
                 area = rel.split('/')[0]                      # entries are organized by topic area, not by course
+                # The rewritten lessons carry the topic area in their banner, so the title heuristic can land on it
+                # ("Spanish and Republic Texas"); there the page's own <title> is the lesson title.
+                pt = (res['page_title'] or '').strip()
+                if pt and not re.search(r'\s[|·—-]\s|Optima|Lesson \d|Grade|Quarter|Module \d', pt):
+                    res['title'] = pt
                 entry_id = f"{area}-{slugify(res['title'], 48)}"; n = 2
                 while entry_id in used_ids: entry_id = f"{area}-{slugify(res['title'], 44)}-{n}"; n += 1
                 used_ids.add(entry_id)

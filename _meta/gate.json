@@ -1,12 +1,12 @@
 {
  "entries": 72,
- "paragraphs": 647,
+ "paragraphs": 1141,
  "by_status": {
   "extracted": 71,
   "edited": 1
  },
  "by_area": {
-  "age-of-exploration": 8,
+  "age-of-exploration": 7,
   "ancient-anatolia": 1,
   "ancient-egypt": 7,
   "ancient-harappan-indus-valley": 1,
@@ -14,22 +14,23 @@
   "ancient-mesopotamia": 12,
   "archaic-classical-greece": 1,
   "bronze-dark-age-greece": 3,
+  "mexican-independence-caudillismo": 3,
+  "new-spain-hapsburg-bourbon": 2,
   "persian-near-east": 6,
   "predynastic-shang-china": 1,
-  "spanish-republic-texas": 28
+  "spanish-republic-texas": 24
  },
  "by_course_fit": {
   "txhist7": 36,
   "wh6": 36
  },
  "by_category": {
-  "historic-context": 20,
-  "biography": 14,
-  "geography": 8,
-  "historical-concept": 8,
-  "primary-source": 12,
-  "civic-concept": 9,
-  "economics-concept": 1
+  "historic-context": 43,
+  "primary-source": 11,
+  "biography": 10,
+  "geography": 3,
+  "historical-concept": 4,
+  "civic-concept": 1
  },
  "manifest_pages_with_content": 72,
  "entries_missing_for_pages": [],
