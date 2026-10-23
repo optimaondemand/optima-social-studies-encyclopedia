@@ -2422,6 +2422,65 @@
 "proposals": 0
 },
 {
+"id": "archaic-classical-greece-the-practice-of-drama-in-athens",
+"title": "The Practice of Drama in Athens",
+"category": "historic-context",
+"scope": "general",
+"status": "draft",
+"publish": false,
+"rights": "unchecked",
+"schema": 1,
+"area": "archaic-classical-greece",
+"course": "",
+"course_code": "",
+"grade": "",
+"module": "",
+"topics": [
+"Drama",
+"Ancient",
+"Athens",
+"City",
+"Dionysia"
+],
+"texts": [
+"Antigone"
+],
+"authors": [],
+"period": "",
+"standards_fl": [],
+"standards_tx": [],
+"standards_ccss": [],
+"moves": [],
+"genre": "",
+"pairs_with": [],
+"see_also": [],
+"media": [],
+"paragraphs": 30,
+"words": 3330,
+"voice_flagged": 0,
+"notes": "Development of drama in Ancient Athens, emphasizing the Dionysia festival.",
+"sources": [
+{
+"repo": "authored",
+"path": "entries/archaic-classical-greece/archaic-classical-greece-the-practice-of-drama-in-athens.md",
+"sha": "",
+"lesson_title": "The Practice of Drama in Athens",
+"url": ""
+}
+],
+"reviewed_blocks": [],
+"edited_at": "2026-10-23",
+"file": "entries/archaic-classical-greece/archaic-classical-greece-the-practice-of-drama-in-athens.md",
+"roles": {
+"content": 30
+},
+"sections": [],
+"body_hash": "d1ce6d940450",
+"extracted_hash": "d1ce6d940450",
+"changed_since_extraction": false,
+"proposals": 0
+},
+{
 "id": "bronze-dark-age-greece-minoan-and-mycenaean-civilization-palace-economi",
 "title": "Minoan and Mycenaean Civilization: Palace Economies, Beehive Tombs, and the Wanax",
 "category": "historical-concept",

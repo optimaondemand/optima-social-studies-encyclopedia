@@ -1,5 +1,19 @@
 # Topic queue: things to write that have no entry yet.
-# Empty — the standards audit (build step 6) that seeds coverage-gap items hasn't run for this
-# experiment (blocked, see NEXT-SESSION.md open items). Nothing fabricated here.
 schema: 1
-items: []
+items:
+  - id: the-practice-of-drama-in-athens
+    title: The Practice of Drama in Athens
+    category: historic-context
+    area: archaic-classical-greece
+    texts:
+      - Antigone
+    topics:
+      - Drama
+      - Ancient
+      - Athens
+      - City
+      - Dionysia
+    notes: Development of drama in Ancient Athens, emphasizing the Dionysia festival.
+    status: started
+    created: '2026-10-23'
+    entry: archaic-classical-greece-the-practice-of-drama-in-athens

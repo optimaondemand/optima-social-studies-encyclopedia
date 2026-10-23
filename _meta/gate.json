@@ -1,9 +1,10 @@
 {
- "entries": 72,
- "paragraphs": 1141,
+ "entries": 73,
+ "paragraphs": 1171,
  "by_status": {
   "extracted": 71,
-  "edited": 1
+  "edited": 1,
+  "draft": 1
  },
  "by_area": {
   "age-of-exploration": 7,
@@ -12,7 +13,7 @@
   "ancient-harappan-indus-valley": 1,
   "ancient-levant": 4,
   "ancient-mesopotamia": 12,
-  "archaic-classical-greece": 1,
+  "archaic-classical-greece": 2,
   "bronze-dark-age-greece": 3,
   "mexican-independence-caudillismo": 3,
   "new-spain-hapsburg-bourbon": 2,
@@ -22,10 +23,11 @@
  },
  "by_course_fit": {
   "txhist7": 36,
-  "wh6": 36
+  "wh6": 36,
+  "": 1
  },
  "by_category": {
-  "historic-context": 43,
+  "historic-context": 44,
   "primary-source": 11,
   "biography": 10,
   "geography": 3,
@@ -34,11 +36,39 @@
  },
  "manifest_pages_with_content": 72,
  "entries_missing_for_pages": [],
- "orphan_entries_not_in_manifest": [],
+ "orphan_entries_not_in_manifest": [
+  "authored/entries/archaic-classical-greece/archaic-classical-greece-the-practice-of-drama-in-athens.md"
+ ],
  "paragraph_count_mismatch": [],
  "duplicate_ids": [],
  "frontmatter_problems": [],
- "vocabulary_errors": [],
- "vocabulary_error_count": 0,
- "pass": true
+ "vocabulary_errors": [
+  {
+   "id": "archaic-classical-greece-the-practice-of-drama-in-athens",
+   "field": "topics",
+   "value": "Drama"
+  },
+  {
+   "id": "archaic-classical-greece-the-practice-of-drama-in-athens",
+   "field": "topics",
+   "value": "Ancient"
+  },
+  {
+   "id": "archaic-classical-greece-the-practice-of-drama-in-athens",
+   "field": "topics",
+   "value": "Athens"
+  },
+  {
+   "id": "archaic-classical-greece-the-practice-of-drama-in-athens",
+   "field": "topics",
+   "value": "City"
+  },
+  {
+   "id": "archaic-classical-greece-the-practice-of-drama-in-athens",
+   "field": "topics",
+   "value": "Dionysia"
+  }
+ ],
+ "vocabulary_error_count": 5,
+ "pass": false
 }
