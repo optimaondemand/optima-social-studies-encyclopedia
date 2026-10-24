@@ -298,6 +298,7 @@ body.focusing{--hh:0px}
   <button class="ghost push" id="btnSend" title="Send your saved entries to the encyclopedia repository on GitHub."><b>⇪ Push to GitHub</b> <span class="pill" id="sendcount">0</span></button>
   <button class="ghost" id="btnPush" title="Review entries you have applied to their lessons. (Preview only for now: nothing is written to the lessons.)"><b>Lesson changes</b> <span class="pill" id="pushcount">0</span></button>
   <button class="ghost" id="btnCsv">Export CSV</button>
+  <a class="ghost" href="guide.html" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;padding:6px 10px;border:1px solid rgba(255,255,255,.4);border-radius:6px">Guide</a>
   <button class="ghost gh-only" id="btnActivity" hidden>Activity</button>
   <span class="who gh-only small" id="who" hidden></span>
   <span class="setup gh-only small" id="setup" hidden></span>
@@ -305,6 +306,7 @@ body.focusing{--hh:0px}
 <section id="signin" hidden>
   <div class="card">
     <h2>Sign in to edit</h2>
+    <p class="small">New here? <a href="guide.html">Read the setup guide</a>.</p>
     <p>The entries live in the GitHub repository <b id="siRepoName"></b>. Every save becomes a commit there under your own GitHub name, so the history of each entry shows who changed what and when.</p>
     <ol class="steps">
       <li>Your GitHub account needs write access to that repository. If you do not have it yet, ask the repository owner to add you as a collaborator.</li>

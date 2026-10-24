@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Encyclopedia Editor Guide</title>
+<style>
+:root{--navy:#0e1c42;--ink:#1a2340;--cyan:#1b6a9c;--gold:#c7922c;--bg:#f4f6fa;--line:#d9dee8;--card:#fff}
+*{box-sizing:border-box}
+body{margin:0;font:16px/1.6 "Segoe UI",Segoe,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+header{background:var(--navy);color:#fff;padding:14px 18px}
+header a{color:#ffe3a6;text-decoration:none;font-weight:600}
+header a:hover{text-decoration:underline}
+main{max-width:760px;margin:0 auto;padding:20px 16px 48px}
+h1{font-size:26px;margin:8px 0 4px}
+h2{font-size:19px;margin:0 0 8px;color:var(--navy)}
+.lede{color:#4a5675;margin:0 0 20px}
+.card{background:var(--card);border:1px solid var(--line);border-top:3px solid var(--gold);border-radius:8px;padding:16px 20px;margin:0 0 16px}
+ol,ul{padding-left:22px;margin:8px 0}
+li{margin:6px 0}
+code{background:#eef1f7;padding:1px 5px;border-radius:4px;font-size:14px}
+.note{background:#fdf3e3;border-left:4px solid var(--gold);padding:10px 14px;border-radius:4px;margin:10px 0}
+a{color:var(--cyan)}
+.btn{display:inline-block;background:var(--gold);color:#fff;padding:8px 14px;border-radius:6px;text-decoration:none;font-weight:600}
+</style>
+</head>
+<body>
+<header><a href="./">&larr; Back to the editor</a></header>
+<main>
+  <h1>Encyclopedia Editor Guide</h1>
+  <p class="lede">How to get set up and start editing. You do not need to install anything. You only need a web browser and a GitHub account.</p>
+
+  <div class="card">
+    <h2>Just want to look?</h2>
+    <p>On the sign-in screen, choose <b>Just look around (read-only)</b>. You can browse every lesson and entry without an account. Nothing can be saved in this mode.</p>
+  </div>
+
+  <div class="card">
+    <h2>Set up to edit (one time, about five minutes)</h2>
+    <ol>
+      <li><b>Get write access.</b> Your GitHub account must have write access to the repository <code>optimaondemand/optima-social-studies-encyclopedia</code>. If you do not have it, ask the repository owner to add you as a collaborator, and accept the invitation GitHub emails you.</li>
+      <li><b>Create a token.</b> A token is a long password that lets this editor save on your behalf. Open <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a> and fill it in like this:
+        <ul>
+          <li><b>Token name:</b> anything you will recognize, such as "Encyclopedia editor".</li>
+          <li><b>Expiration:</b> pick a date. When it passes, make a new token the same way.</li>
+          <li><b>Resource owner:</b> <code>optimaondemand</code></li>
+          <li><b>Repository access:</b> choose <b>Only select repositories</b>, then pick <code>optima-social-studies-encyclopedia</code>.</li>
+          <li><b>Repository permissions:</b> find <b>Contents</b> and set it to <b>Read and write</b>. Leave everything else alone.</li>
+        </ul>
+        Press <b>Generate token</b> and copy it right away. GitHub shows it only once.
+      </li>
+      <li><b>Sign in.</b> Open the <a href="./">editor</a>, paste the token into the Token box, and press <b>Sign in</b>.</li>
+    </ol>
+    <div class="note">If GitHub says the organization must approve your token, tell the repository owner. They can approve it from the organization's settings. Keep your token private. It stays in your browser and is used only to talk to GitHub.</div>
+  </div>
+
+  <div class="card">
+    <h2>Finding something to edit</h2>
+    <ul>
+      <li><b>Lessons</b> shows every lesson in the library, grouped by topic folder in rough chronological order. Click a folder to open it, and click a lesson to preview it. A green dot means the lesson already has an entry.</li>
+      <li><b>Entries</b> is the table of entries. You can filter by topic area.</li>
+      <li><b>+ New topic</b> starts an entry that does not exist yet.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>Editing and saving</h2>
+    <ul>
+      <li>Click an entry to open it and write in the editor. Press Enter to split a paragraph and Backspace at the start of a paragraph to join it to the one above. Bold and italic are the only styling an entry allows.</li>
+      <li><b>Save</b> sends your change to GitHub right away as a commit under your own name. The history shows who changed what and when. You do not need to press a separate Push button.</li>
+      <li>If someone else saved the same entry after you opened it, the editor tells you and asks you to reopen it so you can see their version first. Then make your change again.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2>What does not work on this page yet</h2>
+    <ul>
+      <li><b>Refresh</b> and the lesson re-scan need the project owner's local copy. When lessons change, the lesson list on this page updates only after the owner re-scans and publishes.</li>
+      <li><b>Lesson changes</b> is a preview. Applying an entry to its lesson does not change the lesson page itself yet.</li>
+      <li><b>Push to GitHub</b> only explains that your saves are already on GitHub.</li>
+    </ul>
+  </div>
+
+  <p><a class="btn" href="./">Open the editor</a></p>
+</main>
+</body>
+</html>
