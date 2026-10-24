@@ -1,10 +1,36 @@
 # Next Session — Social Studies Encyclopedia Experiment
 
-Status as of this handoff (updated 2026-09-30): **editor built, published as its own GitHub repo, and hosted on GitHub Pages (public)** (`optimaondemand/optima-social-studies-encyclopedia`, created at the user's direction as "the final stage of the
+Status as of this handoff (updated 2026-10-23; the newest dated logs below come first): **editor built, published as its own GitHub repo, and hosted on GitHub Pages (public)** (`optimaondemand/optima-social-studies-encyclopedia`, created at the user's direction as "the final stage of the
 experiment"). The repo starts from a single fresh commit of the current state; the older local history (which predates the
 clean break and names the old course repos) was deliberately NOT published and stays only in the local `master` branch. The
 encyclopedia draws **only** on the `optima-history` lesson library (a clean break; see below). A demo for the author of the ELA
 editor is pending.
+
+## Progress log: 2026-10-23 (later): Push connected, guide published, everything on GitHub
+
+Commits pushed to `main` today: `5abbaa7` (Texas entries re-pointed), `939c498` (user's new entry "The Practice of Drama in
+Athens"), `cf91b92` (Push to GitHub), `11e57d2` (guide). The hosted editor therefore has all 72 entries.
+
+- **Push now means GitHub.** In the local editor the header has **⇪ Push to GitHub** (count of changed files plus unpushed
+  commits). It opens a dialog with an optional note, then commits `entries/`, `_original/`, `visuals/`, `_meta/` and `index.json`
+  and pushes to this repo. Never forces; fetches first and stops, sending nothing, if GitHub is ahead. Backend: `POST
+  /api/gitstatus` and `POST /api/push-entries` in `_build/serve.py`. Tested end to end on a throwaway repo with a local bare
+  origin, not yet pressed for real by the user. On the hosted editor the button only explains that every save is already a commit.
+- **The old Push cart is renamed "Lesson changes"** (still preview only). Its two Place order steps (write into lessons in
+  `optima-history`, send that to GitHub) remain unbuilt; that write-back, which must keep glossary tooltips and widgets, is
+  the next big piece. The user wants it as a separate step from entry pushing.
+- **Why it looked broken:** "Push" was originally designed only for lesson write-back, and the local Save never committed.
+- **Guide:** `editor/guide.html`, live at `https://optimaondemand.github.io/optima-social-studies-encyclopedia/editor/guide.html`,
+  linked from the editor header ("Guide") and the sign-in screen. Covers read-only browsing, collaborator access, creating a
+  fine-grained token (owner `optimaondemand`, this repo only, Contents read and write), signing in, editing, and the limits of the
+  hosted page. The token steps were not tested from a second account.
+- **Letting someone else use it:** no installer. They need write access to the repo (collaborator) and their own token, then
+  use the hosted editor. Hosted limits: Refresh, Re-scan and the lesson list update only through the owner's local server (the
+  Lessons view reads `_meta/source_inventory.json`, refreshed by a local Re-scan and a push).
+- **Local server:** `python _build/serve.py`, then `http://localhost:8765/editor/`; foreground process, stops at logout. Restart it
+  to pick up code changes. Python paths over 260 characters fail on Windows, so run copies from a short path.
+- **Tokens:** the user's token file is `C:\Users\Patrick\Desktop\Files for Claude\Rreed Current Tokens.txt` (never print values).
+  Pushes today worked with the existing `gh` login, so no token was needed.
 
 ## Progress log: 2026-10-23: Texas entries re-pointed at the rewritten lessons (read this first)
 
